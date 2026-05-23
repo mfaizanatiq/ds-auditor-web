@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>DS Auditor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <h1>DS Auditor</h1>
+      <span class="header-badge">Web</span>
+    </div>
+    <div class="header-actions">
+      <label class="header-toggle toggle-switch" id="applyAllWrap" style="display:none" title="Preview all fixes on page">
+        <input type="checkbox" id="applyAllToggle" aria-label="Preview all fixes" />
+        <span class="toggle-slider"></span>
+      </label>
+      <button class="icon-btn" id="exportBtn" style="display:none" title="Export HTML report (Shift+click for JSON)" aria-label="Export HTML report">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" title="Token libraries" aria-label="Token libraries">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="screen active" id="mainScreen">
+    <div class="score-card" id="scoreCard">
+      <div class="score-value" id="scoreValue">—</div>
+      <div class="score-label">Compliance</div>
+      <div class="score-meta" id="scoreMeta">Token library loaded — audit this page</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="runAuditBtn" disabled>Audit this page</button>
+    </div>
+
+    <div class="filter-bar" id="filterBar" style="display:none">
+      <div class="view-switcher" id="viewSwitcher">
+        <button type="button" class="view-btn active" data-view="foundation">Foundation</button>
+        <button type="button" class="view-btn" data-view="component">Component</button>
+      </div>
+      <div class="filter-segment-group" id="filterSegments"></div>
+    </div>
+    <p class="issue-hint" id="issueHint" style="display:none">Hover a card to locate on page · Click Apply to inject the token fix</p>
+
+    <div class="results" id="results">
+      <div class="empty-state" id="emptyState">
+        <p>Upload any design-system token file (CSS custom properties or JSON). The auditor scans your library, infers semantic layers, and suggests the right tokens automatically.</p>
+      </div>
+      <div id="issueList"></div>
+    </div>
+  </div>
+
+  <div class="screen" id="librariesScreen">
+    <div class="settings-content">
+      <div class="settings-section">
+        <div class="settings-section-header">Token libraries</div>
+        <p class="form-hint">Upload CSS files with custom properties (<code>--token-name</code>) or JSON token exports (Style Dictionary, Tokens Studio).</p>
+        <label class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept=".css,.json,.scss" multiple hidden>
+          <span>Drop files or click to upload</span>
+        </label>
+        <ul class="library-list" id="libraryList"></ul>
+      </div>
+      <button class="btn btn-secondary" id="backBtn">Back to audit</button>
+    </div>
+  </div>
+
+  <div class="loader" id="loader">
+    <div class="loader-spinner"></div>
+    <p class="loader-text">Auditing page…</p>
+  </div>
+
+  <div class="status-msg" id="statusMsg"></div>
+
+  <script src="../lib/color-utils.js"></script>
+  <script src="../lib/token-parser.js"></script>
+  <script src="../lib/token-synthesizer.js"></script>
+  <script src="../lib/html-report.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

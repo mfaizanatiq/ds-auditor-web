@@ -1,0 +1,41 @@
+/**
+ * Example design token library for DS Auditor Web.
+ * Upload this file via the extension popup to test audits.
+ */
+:root {
+  /* Colors */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-background-surface: #ffffff;
+  --color-background-muted: #f3f4f6;
+  --color-border-default: #e5e7eb;
+  --color-brand-primary: #0d99ff;
+
+  /* Spacing */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Typography */
+  --font-family-base: Inter, system-ui, sans-serif;
+  --font-size-body: 16px;
+  --font-size-small: 14px;
+  --font-size-heading: 24px;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}

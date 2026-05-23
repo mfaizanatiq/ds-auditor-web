@@ -1,0 +1,11 @@
+{
+  "name": "ds-auditor-web",
+  "version": "0.1.0",
+  "description": "Chrome extension — design system linter for live web pages",
+  "private": true,
+  "scripts": {
+    "bundle:tokens": "node scripts/bundle-preload.js",
+    "bundle:tokens:fds": "cp ../fds-design-tokens/build/css/variables-light.css data/fds-variables-light.css && node scripts/bundle-preload.js"
+  },
+  "license": "MIT"
+}

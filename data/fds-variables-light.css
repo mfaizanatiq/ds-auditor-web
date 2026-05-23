@@ -1,0 +1,1436 @@
+:root {
+
+  /* ============================================
+   * BASE TOKENS
+   * ============================================
+   * Foundation design tokens that define the base values
+   * used throughout the design system.
+   *
+   * Categories:
+   * 1. Blur
+   * 2. Border
+   * 3. Breakpoint
+   * 4. Color (Gradient)
+   * 5. Color (Solid)
+   * 6. Duration
+   * 7. Motion (Duration)
+   * 8. Motion (Easing)
+   * 9. Motion (Opacity)
+   * 10. Motion (Scale)
+   * 11. Motion (Transform Origin)
+   * 12. Opacity
+   * 13. Radius
+   * 14. Shadow
+   * 15. Size
+   * 16. Space
+   * 17. Typography (Family)
+   * 18. Typography (Line Height)
+   * 19. Typography (Scale)
+   * 20. Typography (Weight)
+   * ============================================ */
+
+
+  /* --- Blur --- */
+
+  /* A subtle 8px blur effect that creates gentle diffusion for visual softening. */
+  --f-base-blur-1: 8px;
+  /* A medium 20px blur effect that provides noticeable diffusion for stronger visual separation. */
+  --f-base-blur-2: 20px;
+
+  /* --- Breakpoint --- */
+
+  /* The foundational breakpoint for extra-small screens at 0px, establishing the baseline for mobile-first responsive design. */
+  --f-base-breakpoint-xs: 0;
+  /* Small screen breakpoint at 576px, marking the transition from mobile to larger handheld devices. */
+  --f-base-breakpoint-sm: 576;
+  /* Medium screen breakpoint at 768px, defining the threshold for standard tablet layouts. */
+  --f-base-breakpoint-md: 768;
+  /* Large screen breakpoint at 992px, establishing the standard desktop interface width. */
+  --f-base-breakpoint-lg: 992;
+  /* Extra-large screen breakpoint at 1920px, designed for high-resolution displays and wide desktop environments. */
+  --f-base-breakpoint-xl: 1920;
+
+  /* --- Border --- */
+
+  /* A zero-width border (0px) that creates invisible or borderless visual treatments. */
+  --f-base-border-size-0: 0px;
+  /* A thin 1px border width that provides subtle separation and definition. */
+  --f-base-border-size-1: 1px;
+  /* A medium 2px border width that creates noticeable emphasis and visual weight. */
+  --f-base-border-size-2: 2px;
+  /* A thick 4px border width that delivers strong visual impact and heavy separation. */
+  --f-base-border-size-3: 4px;
+  /* A thick 4px border width following the Figma value-based naming convention (size/4 = 4px). */
+  --f-base-border-size-4: 4px;
+
+  /* --- Color (Solid) --- */
+
+  /* A muted, lighter burgundy (#BF5288) providing accessible contrast on dark backgrounds — sits between burgundy/200 and burgundy/400. */
+  --f-base-color-solid-burgundy-300: #BF5288;
+  /* A medium burgundy (#8E2157) that serves as the primary brand accent color for interactive elements. */
+  --f-base-color-solid-burgundy-400: #8E2157;
+  /* A deep, dark burgundy (#5C0931) providing strong visual contrast for emphasis and hover states. */
+  --f-base-color-solid-burgundy-900: #5c0931;
+  /* Pure white (#FFFFFF) used for light backgrounds, borders, text, and icons to create clean, high-contrast interfaces. */
+  --f-base-color-solid-white-100: #ffffff;
+  /* Pure white (#FFFFFF) with 80% alpha transparency, creating a translucent white for frosted glass and soft overlay effects. */
+  --f-base-color-solid-white-100-80a: #FFFFFFCC;
+  /* A very light grey (#DBDEE8) ideal for subtle container backgrounds and inner borders. */
+  --f-base-color-solid-grey-200: #DBDEE8;
+  /* A light neutral grey (#CED3D9) for muted text on dark surfaces, sitting between grey/200 and grey/300. */
+  --f-base-color-solid-grey-250: #CED3D9;
+  /* A light grey (#9DACBC) suitable for muted UI elements like disabled icons or secondary text. */
+  --f-base-color-solid-grey-300: #9DACBC;
+  /* A medium neutral grey (#9EA2A6) for subtle text on dark surfaces, sitting between grey/300 and grey/400. */
+  --f-base-color-solid-grey-350: #9EA2A6;
+  /* A medium-light grey (#9099A2) commonly used for default text, lines, and placeholders. */
+  --f-base-color-solid-grey-400: #9099A2;
+  /* A medium-dark neutral grey (#797C80) for disabled text on dark surfaces, sitting between grey/400 and grey/500. */
+  --f-base-color-solid-grey-450: #797C80;
+  /* A middle grey (#6E7780) providing a neutral midpoint in the grey scale for balanced UI tones. */
+  --f-base-color-solid-grey-500: #6E7780;
+  /* A dark grey (#4A525D) used for muted UI text or primary icons to maintain readability with moderate contrast. */
+  --f-base-color-solid-grey-600: #4A525D;
+  /* A very dark grey (#363E47) ideal for background surfaces that require depth without full black. */
+  --f-base-color-solid-grey-700: #363E47;
+  /* A dark blue-grey (#2E3140) for inner borders and dividers on dark surfaces, sitting between grey/700 and grey/800. */
+  --f-base-color-solid-grey-750: #2E3140;
+  /* A very dark blue-grey (#252733) for elevated dark surfaces, sitting between grey/700 and grey/900. */
+  --f-base-color-solid-grey-800: #252733;
+  /* A very dark blue-grey (#1F232E) for disabled surface backgrounds in dark mode, sitting between grey/800 and grey/900. */
+  --f-base-color-solid-grey-850: #1F232E;
+  /* A deep charcoal grey (#1F212B), the darkest shade in the grey palette, providing strong visual weight and contrast. */
+  --f-base-color-solid-grey-900: #1F212B;
+  /* A near-black blue-grey (#1A1E26) for the lightest elevated surface in dark mode, extending beyond grey/900. */
+  --f-base-color-solid-grey-920: #1A1E26;
+  /* A near-black blue-grey (#12141A) for elevated surfaces in dark mode, extending beyond grey/900. */
+  --f-base-color-solid-grey-950: #12141A;
+  /* The darkest near-black (#090A0D) serving as the base canvas in dark mode, the absolute floor of the grey scale. */
+  --f-base-color-solid-grey-980: #090A0D;
+  /* A very light lavender-grey (#F2F3FA), the lightest shade in the updated grey palette, designed for subtle background surfaces. */
+  --f-base-color-solid-grey-100-new: #F2F3FA;
+  /* A medium grey (#9DACBC) with 60% alpha transparency, creating a semi-transparent, muted tone. */
+  --f-base-color-solid-grey-300-60a: #9DACBC99;
+  /* A dark grey (#4A525D) with 50% alpha transparency, offering a medium-dark, translucent shade. */
+  --f-base-color-solid-grey-600-50a: #4A525D80;
+  /* The charcoal grey base (#1F212B) with 0% alpha transparency, resulting in a fully transparent color. */
+  --f-base-color-solid-grey-900-0a: #1F212B00;
+  /* The charcoal grey base (#1F212B) with 20% alpha transparency, creating a subtle, barely visible dark tint. */
+  --f-base-color-solid-grey-900-20a: #1F212B33;
+  /* The charcoal grey base (#1F212B) with 8% alpha transparency, creating a very faint, almost imperceptible tint. */
+  --f-base-color-solid-grey-900-08a: #1F212B14;
+  /* The charcoal grey base (#1F212B) with 40% alpha transparency, providing a semi-transparent dark layer. */
+  --f-base-color-solid-grey-900-40a: #1F212B66;
+  /* The charcoal grey base (#1F212B) with 50% alpha transparency, offering a medium-opacity dark tint. */
+  --f-base-color-solid-grey-900-50a: #1F212B80;
+  /* The charcoal grey base (#1F212B) with 70% alpha transparency, creating a highly opaque but still translucent dark shade. */
+  --f-base-color-solid-grey-900-70a: #1F212BB2;
+  /* The darkest near-black (#090A0D) at 70% opacity. Used for deep overlay surfaces. */
+  --f-base-color-solid-grey-980-70a: #090A0DB2;
+  /* A very light mint green (#ECFFF5), the palest shade in the green palette, evoking freshness and positivity. */
+  --f-base-color-solid-green-100: #ECFFF5;
+  /* A bright, vibrant green (#34db80) representing positive feedback and confirmation. */
+  --f-base-color-solid-green-200: #34db80;
+  /* A deep, forest green (#328256) providing strong visual weight for success elements. */
+  --f-base-color-solid-green-900: #328256;
+  /* A bold, golden yellow (#fcc500) signaling caution and attention. */
+  --f-base-color-solid-yellow-100: #fcc500;
+  /* A rich, mustard yellow (#7a5e00) with high contrast for emphasis. */
+  --f-base-color-solid-yellow-900: #B68E00;
+  /* A warm coral-orange (#F47758) that draws immediate attention without the severity of red. */
+  --f-base-color-solid-orange-400: #F47758;
+  /* A soft, muted red (#d95757) for subtle error indications. */
+  --f-base-color-solid-red-100: #d95757;
+  /* A strong, brick red (#cc4726) for high-impact error messaging. */
+  --f-base-color-solid-red-900: #cc4726;
+  /* A light, pinkish burgundy (#FC5F77) for subtle loyalty-themed backgrounds. */
+  --f-base-color-solid-loyalty-burgundy-100: #FC5F77;
+  /* A medium, deep burgundy (#780044) serving as the default loyalty color. */
+  --f-base-color-solid-loyalty-burgundy-400: #780044;
+  /* A dark, rich burgundy (#64003A) for loyalty accents and emphasis. */
+  --f-base-color-solid-loyalty-burgundy-700: #64003A;
+  /* A very dark, near-black burgundy (#3C0026) for maximum loyalty emphasis. */
+  --f-base-color-solid-loyalty-burgundy-900: #3C0026;
+  /* A very light silver (#f0f0f0) for subtle loyalty-themed backgrounds. */
+  --f-base-color-solid-loyalty-silver-100: #f0f0f0;
+  /* A medium gray silver (#787878) for standard loyalty elements. */
+  --f-base-color-solid-loyalty-silver-400: #787878;
+  /* A light warm beige (#ffeed8) for subtle gold-themed loyalty backgrounds. */
+  --f-base-color-solid-loyalty-gold-100: #ffeed8;
+  /* A rich brown-gold (#8c5617) for standard loyalty elements. */
+  --f-base-color-solid-loyalty-gold-400: #8c5617;
+  /* A deep dark brown-gold (#644316) for high-contrast loyalty emphasis. */
+  --f-base-color-solid-loyalty-gold-900: #644316;
+  /* A light gray (#acacac) for subtle platinum-themed loyalty backgrounds. */
+  --f-base-color-solid-loyalty-platinum-100: #acacac;
+  /* A near-black dark gray (#1a1a1a) for high-contrast platinum loyalty emphasis. */
+  --f-base-color-solid-loyalty-platinum-900: #1a1a1a;
+  /* A muted lavender violet (#7f6caf) for subtle accent backgrounds. */
+  --f-base-color-solid-violet-100: #7f6caf;
+  /* A medium blue-violet (#6661cf) for secondary accents and illustrations. */
+  --f-base-color-solid-violet-200: #6661cf;
+  /* A strong deep violet (#3a35af) for primary accents and highlights. */
+  --f-base-color-solid-violet-900: #3a35af;
+
+  /* --- Color (Gradient) --- */
+
+  /* A subtle vertical gradient transitioning from pure white to a very light grey (grey-10), creating a clean, elevated surface effect. */
+  --f-base-color-gradient-white: linear-gradient(180deg,var(--f-base-color-solid-white) 0,var(--f-base-color-solid-grey-10) 100%);
+  /* A vertical gradient from white to light grey (grey-10) with a shorter transition (40%), creating a more subtle surface effect than the standard white gradient. */
+  --f-base-color-gradient-white-surface: linear-gradient(180deg,var(--f-base-color-solid-white) 0,var(--f-base-color-solid-grey-10) 40%);
+  /* A vertical gradient transitioning from dark grey (grey-100) to silver (silver-100), creating a cool, metallic surface appearance. */
+  --f-base-color-gradient-grey: linear-gradient(180deg,var(--f-base-color-solid-grey-100) 0,var(--f-base-color-solid-silver-100) 100%);
+  /* A horizontal gradient (270°) transitioning from violet-100 to a light blue (#93caf3), creating a vibrant, colorful accent effect. */
+  --f-base-color-gradient-violet: linear-gradient(270deg,var(--f-base-color-solid-violet-100) 0,#93caf3 100%);
+  /* A radial burgundy gradient with complex color stops from pink (#FB5F77) to deep burgundy (#3C0026), positioned off-center for a dynamic, premium appearance. */
+  --f-base-color-gradient-loyalty-burgundy: radial-gradient(88.9% 88.9% at 103.13% 102.82%, #FB5F77 0%, #C93B63 8%, #A62156 15%, #8C0F4C 28%, #7D0346 37%, #67003B 64%, #64003A 68%, #3C0026 100%);
+  /* A radial silver gradient transitioning from light grey (#EFEFEF) to dark grey (#787878), creating a metallic, neutral appearance for loyalty tiers. */
+  --f-base-color-gradient-loyalty-silver: radial-gradient(85.64% 85.64% at 100% 101.77%, #EFEFEF 0%, #CCCCCC 10%, #ADADAD 21%, #989898 33%, #858585 45%, #7B7B7B 58%, #787878 74%, #787878 100%);
+  /* A radial gold gradient with warm tones from light beige (#FFEDD7) to deep brown (#8B5617), creating a rich, luxurious appearance. */
+  --f-base-color-gradient-loyalty-gold: radial-gradient(88.28% 88.28% at 100.55% 100.55%, #FFEDD7 0%, #EFD8BD 4%, #D5B691 12%, #BE986B 21%, #AB804C 33%, #9D6D35 45%, #926024 57%, #8C581A 68%, #8B5617 80%, #8B5617 99.99%);
+  /* A radial platinum gradient transitioning from medium grey (#ABABAB) to near-black (#1A1A1A), creating a dark, sophisticated metallic effect. */
+  --f-base-color-gradient-loyalty-platinum: radial-gradient(82.58% 82.58% at 100% 100%, #ABABAB 0%, #939393 5%, #6E6E6E 17%, #4F4F4F 28%, #383838 38%, #272727 48%, #1D1D1D 64%, #1A1A1A 81%, #1A1A1A 100%);
+  /* A vertical overlay gradient transitioning from transparent to a semi-transparent dark blue-grey (rgba(31,33,43,0.7)), creating a fading shadow effect. */
+  --f-base-color-gradient-overlay-vertical: linear-gradient(180deg, rgba(31,33,43,0) 0, rgba(31,33,43,0.7) 100%);
+  /* A horizontal overlay gradient transitioning from transparent to a semi-transparent dark blue-grey (rgba(31,33,43,0.7)), creating a side-fading shadow effect. */
+  --f-base-color-gradient-overlay-horizontal: linear-gradient(90deg, rgba(31,33,43,0) 0, rgba(31,33,43,0.7) 100%);
+
+  /* --- Duration --- */
+
+  /* A very brief 120ms duration for subtle micro-interactions and quick state changes. */
+  --f-base-duration-120: 120ms;
+  /* A short 240ms duration for responsive interactive elements and smooth transitions. */
+  --f-base-duration-240: 240ms;
+  /* A medium 480ms duration for noticeable animations and deliberate UI movements. */
+  --f-base-duration-480: 480ms;
+  /* A prolonged 720ms duration for expressive animations and immersive transitions. */
+  --f-base-duration-720: 720ms;
+  /* A lengthy 960ms duration for dramatic animations and significant visual changes. */
+  --f-base-duration-960: 960ms;
+  /* A very long 1200ms duration for cinematic animations and gradual, deliberate sequences. */
+  --f-base-duration-1200: 1200ms;
+
+  /* --- Motion (Duration) --- */
+
+  /* A very brief motion duration of 0.24 seconds, representing the fastest timing in the duration scale. */
+  --f-base-motion-duration-240: .24s;
+  /* A quick motion duration of 0.48 seconds, providing responsive timing for standard interactive transitions. */
+  --f-base-motion-duration-480: .48s;
+  /* A moderate motion duration of 0.96 seconds, offering gentle pacing for content reveals and subtle animations. */
+  --f-base-motion-duration-960: .96s;
+  /* A generous motion duration of 1.2 seconds, representing the slowest timing in the duration scale for deliberate animations. */
+  --f-base-motion-duration-1200: 1.2s;
+
+  /* --- Motion (Easing) --- */
+
+  /* A constant-speed easing function with no acceleration or deceleration, creating mechanical, uniform motion. */
+  --f-base-motion-easing-linear: linear;
+  /* A cubic-bezier easing function that starts slowly and accelerates into motion, creating a gentle entry effect. */
+  --f-base-motion-easing-ease-in: cubic-bezier(0.4, 0, 0, 1);
+  /* A cubic-bezier easing function that starts quickly and decelerates to a stop, creating a smooth exit effect. */
+  --f-base-motion-easing-ease-out: cubic-bezier(0, 0, 0.08, 1);
+  /* A cubic-bezier easing function that combines slow start and slow end with faster middle, creating balanced, natural motion. */
+  --f-base-motion-easing-ease-in-out: cubic-bezier(0.4, 0, 0.08, 1);
+
+  /* --- Motion (Transform Origin) --- */
+
+  /* Sets the transform origin to the center of an element, creating balanced rotation and scaling animations that pivot from the middle. */
+  --f-base-motion-transform-origin-center: center;
+  /* Sets the transform origin to the top edge of an element, enabling animations that pivot from the upper boundary. */
+  --f-base-motion-transform-origin-top: top;
+  /* Sets the transform origin to the bottom edge of an element, enabling animations that pivot from the lower boundary. */
+  --f-base-motion-transform-origin-bottom: bottom;
+  /* Sets the transform origin to the left edge of an element, enabling animations that pivot from the left boundary. */
+  --f-base-motion-transform-origin-left: left;
+  /* Sets the transform origin to the right edge of an element, enabling animations that pivot from the right boundary. */
+  --f-base-motion-transform-origin-right: right;
+
+  /* --- Motion (Scale) --- */
+
+  /* A subtle scaling factor of 0.8 that creates gentle, contained motion effects, ideal for small interface elements. */
+  --f-base-motion-scale-small: .8;
+  /* A moderate scale factor of 1.2 for motion transformations, providing noticeable but restrained visual growth or shrinkage. */
+  --f-base-motion-scale-medium: 1.2;
+  /* A pronounced scale factor of 1.5 for motion transformations, creating bold visual expansion or contraction effects. */
+  --f-base-motion-scale-large: 1.5;
+
+  /* --- Motion (Opacity) --- */
+
+  /* A semi-transparent opacity value of 0.5, providing a subtle fade effect for motion animations. */
+  --f-base-motion-opacity-low: .5;
+  /* A moderately transparent opacity value of 0.8, offering balanced visibility during motion states. */
+  --f-base-motion-opacity-medium: .8;
+  /* A fully opaque value of 1.0, representing complete visibility for motion elements. */
+  --f-base-motion-opacity-high: 1;
+
+  /* --- Space --- */
+
+  /* A zero-value spacing unit (0px) that eliminates gaps and margins. */
+  --f-base-space-0: 0px;
+  /* A small spacing unit (4px) at the lower end of the scale, providing minimal separation. */
+  --f-base-space-1: 4px;
+  /* A compact spacing unit (8px) in the lower-middle scale, offering balanced proximity. */
+  --f-base-space-2: 8px;
+  /* A moderate spacing unit (12px) in the middle scale, providing comfortable separation. */
+  --f-base-space-3: 12px;
+  /* A standard spacing unit (16px) at the mid-scale, offering typical visual breathing room. */
+  --f-base-space-4: 16px;
+  /* A generous spacing unit (20px) in the upper-middle scale, providing ample separation. */
+  --f-base-space-5: 20px;
+  /* A large spacing unit (24px) in the upper scale, offering significant visual breathing room. */
+  --f-base-space-6: 24px;
+  /* An extra-large spacing unit (32px) high in the scale, providing expansive separation. */
+  --f-base-space-8: 32px;
+  /* A double-extra-large spacing unit (40px) near the top of the scale, offering maximum separation. */
+  --f-base-space-10: 40px;
+  /* A triple-extra-large spacing unit (48px) at the top of the scale, providing extreme separation. */
+  --f-base-space-12: 48px;
+  /* 56px spacing unit positioned at scale point 14, representing a large visual gap in the spacing system. */
+  --f-base-space-14: 56px;
+  /* 64px spacing unit at scale point 16, offering an extra-large visual separation for prominent layout elements. */
+  --f-base-space-16: 64px;
+  /* 72px spacing unit at scale point 18, creating maximum visual breathing room in the spacing spectrum. */
+  --f-base-space-18: 72px;
+  /* 80px spacing unit at scale point 20, representing the largest standard spacing value for expansive layouts. */
+  --f-base-space-20: 80px;
+  /* 96px spacing unit at scale point 24, providing extreme visual separation for monumental layout needs. */
+  --f-base-space-24: 96px;
+  /* Large spacing unit of 128px, representing the 32nd step in the base space scale. */
+  --f-base-space-32: 128px;
+  /* Extra-large spacing unit of 144px, representing the 36th step in the base space scale. */
+  --f-base-space-36: 144px;
+  /* Extra-large spacing unit of 144px, representing the 40th step in the base space scale (duplicate value with base/space/36). */
+  --f-base-space-40: 144px;
+  /* Ultra-large spacing unit of 192px, representing the 48th step in the base space scale. */
+  --f-base-space-48: 192px;
+  /* The smallest spacing unit (2px) in the system, providing hairline separation below the standard 4px grid. */
+  --f-base-space-micro-1: 2px;
+  /* A negative micro spacing unit (-2px) for pulling elements closer by the smallest possible amount. */
+  --f-base-space-micro-1n: -2px;
+  /* Negative spacing unit of -32px, representing a large inward offset in the base space scale. */
+  --f-base-space-8n: -32px;
+  /* Negative spacing unit of -24px, representing a medium-large inward offset in the base space scale. */
+  --f-base-space-6n: -24px;
+  /* Negative spacing unit of -16px, representing a medium inward offset in the base space scale. */
+  --f-base-space-4n: -16px;
+  /* Negative spacing unit of -12px, representing a small-medium inward offset in the base space scale. */
+  --f-base-space-3n: -12px;
+  /* Negative spacing unit of -8px, representing a small inward offset in the base space scale. */
+  --f-base-space-2n: -8px;
+  /* Negative spacing unit of -4px, representing a minimal inward offset in the base space scale. */
+  --f-base-space-1n: -4px;
+
+  /* --- Size --- */
+
+  /* Zero spacing value (0px), representing the absence of any dimensional offset in the size scale. */
+  --f-base-size-0: 0px;
+  /* Smallest non-zero spacing unit (4px), serving as the foundational increment for tight spacing in the size scale. */
+  --f-base-size-1: 4px;
+  /* Small spacing unit (8px), providing a balanced step for moderate spacing in the size scale. */
+  --f-base-size-2: 8px;
+  /* Medium-small spacing unit (12px), offering a transitional step between small and medium sizes in the scale. */
+  --f-base-size-3: 12px;
+  /* Medium spacing unit (16px), serving as a common baseline for standard spacing in the size scale. */
+  --f-base-size-4: 16px;
+  /* Medium-large spacing unit (20px), providing a step up from medium for more pronounced spacing in the scale. */
+  --f-base-size-5: 20px;
+  /* Large spacing unit (24px), offering substantial spacing for prominent UI elements in the size scale. */
+  --f-base-size-6: 24px;
+  /* Extra-large spacing unit (32px), providing ample spacing for major layout divisions in the size scale. */
+  --f-base-size-8: 32px;
+  /* Double extra-large spacing unit (40px), serving as a significant step for expansive spacing in the size scale. */
+  --f-base-size-10: 40px;
+  /* Triple extra-large spacing unit (48px), representing the largest increment for maximal spacing in the size scale. */
+  --f-base-size-12: 48px;
+  /* A 56px dimension representing the 14th step in the size scale, providing a medium-large spacing option. */
+  --f-base-size-14: 56px;
+  /* A 64px dimension at the 16th step in the size scale, offering a large spacing value for prominent layouts. */
+  --f-base-size-16: 64px;
+  /* A 72px dimension at the 18th step in the size scale, providing an extra-large spacing option for expansive designs. */
+  --f-base-size-18: 72px;
+  /* An 80px dimension at the 20th step in the size scale, delivering a substantial spacing value for maximum visual impact. */
+  --f-base-size-20: 80px;
+  /* A 96px dimension at the 24th step in the size scale, offering a massive spacing option for grand-scale layouts. */
+  --f-base-size-24: 96px;
+  /* A 128px dimension at the 32nd step in the size scale, providing an extreme spacing value for oversized design elements. */
+  --f-base-size-32: 128px;
+  /* A 144px dimension at the 36th step in the size scale, matching base/size/40 in value but representing a different scale position. */
+  --f-base-size-36: 144px;
+  /* A 144px dimension at the 40th step in the size scale, matching base/size/36 in value but representing a higher scale position. */
+  --f-base-size-40: 144px;
+  /* A 192px dimension at the 48th step in the size scale, providing the largest spacing option in this scale for monumental layouts. */
+  --f-base-size-48: 192px;
+
+  /* --- Opacity --- */
+
+  /* Fully transparent opacity value of 0, representing complete invisibility. */
+  --f-base-opacity-0: 0;
+  /* Subtle opacity value of 0.1, providing minimal transparency for delicate visual effects. */
+  --f-base-opacity-10: 0.1;
+  /* Light opacity value of 0.2, offering gentle transparency for soft visual layers. */
+  --f-base-opacity-20: 0.2;
+  /* Moderate opacity value of 0.3, creating noticeable transparency for layered interfaces. */
+  --f-base-opacity-30: 0.3;
+  /* Medium opacity value of 0.4, providing balanced transparency for interactive feedback. */
+  --f-base-opacity-40: 0.4;
+  /* Half-transparent opacity value of 0.5, offering equal visibility and obscurity. */
+  --f-base-opacity-50: 0.5;
+  /* Prominent opacity value of 0.6, creating strong transparency for emphasized layers. */
+  --f-base-opacity-60: 0.6;
+  /* High opacity value of 0.7, delivering substantial transparency for dominant visual elements. */
+  --f-base-opacity-70: 0.7;
+  /* Very high opacity value of 0.8, providing near-opaque transparency for critical interfaces. */
+  --f-base-opacity-80: 0.8;
+  /* Nearly opaque opacity value of 0.9, offering minimal transparency for solid-looking layers. */
+  --f-base-opacity-90: 0.9;
+  /* Fully opaque visual state with 100% opacity (value: 1), representing complete visibility without transparency. */
+  --f-base-opacity-100: 1;
+
+  /* --- Radius --- */
+
+  /* A sharp, zero-radius corner that creates crisp rectangular edges. This 0px value establishes the minimum boundary in the radius scale. */
+  --f-base-radius-none: 0px;
+  /* A 4px corner radius primitive — the smallest non-zero step in the radius scale, sitting between base/radius/none (0px) and base/radius/sm (8px). Not yet aliased by any semantic brand token. */
+  --f-base-radius-xs: 4px;
+  /* A subtle 8px corner radius that provides gentle softening without pronounced rounding. This small value sits at the lower end of the radius scale. */
+  --f-base-radius-sm: 8px;
+  /* A moderate 12px corner radius that offers balanced rounding for comfortable visual flow. This middle value provides noticeable softening while maintaining structural clarity. */
+  --f-base-radius-md: 12px;
+  /* A substantial 16px corner radius that creates pronounced, pill-like rounding. This large value establishes strong visual softening for prominent elements. */
+  --f-base-radius-lg: 16px;
+  /* An extra-large 20px corner radius that delivers generous, flowing curves. This expansive value creates organic, container-like forms with significant visual weight. */
+  --f-base-radius-xl: 20px;
+  /* A maximum 64px corner radius that creates fully circular or capsule-shaped forms. This extreme value produces pill or oval shapes when applied to rectangular elements. */
+  --f-base-radius-full: 64px;
+
+  /* --- Typography (Family) --- */
+
+  /* Primary font stack featuring Jotia as the preferred typeface, with Verdana and Geneva as fallbacks, establishing the main typographic voice. */
+  --f-base-type-family-primary: "Jotia", "Verdana", "Geneva", sans-serif;
+  /* Secondary font stack using Graphik and Graphik Web as primary choices with Arial fallback, creating a complementary supporting typeface. */
+  --f-base-type-family-secondary: "Graphik", "Graphik Web", "Arial", sans-serif;
+  /* Farsi/Persian primary font stack featuring Almarai and Noto Arabic, specifically tuned for Persian script requirements and aesthetics. */
+  --f-base-type-family-fa-primary: "Almarai", "Noto Arabic", "Arial", sans-serif;
+  /* Farsi/Persian secondary font stack using Almarai and Noto Arabic for consistent Persian typography across all text roles. */
+  --f-base-type-family-fa-secondary: "Almarai", "Noto Arabic", "Arial", sans-serif;
+  /* Bulgarian primary font stack combining Noto Sans for Cyrillic support with Jotia as fallback, ensuring Cyrillic script clarity. */
+  --f-base-type-family-bg-primary: "Noto Sans", "Jotia", sans-serif;
+  /* Bulgarian secondary font stack using Graphik Web with Verdana fallback, providing clear Cyrillic body text readability. */
+  --f-base-type-family-bg-secondary: "Graphik Web", "Verdana", sans-serif;
+  /* Czech primary font stack featuring Noto Sans for Latin-extended support with Jotia fallback, accommodating Czech diacritics. */
+  --f-base-type-family-cs-primary: "Noto Sans", "Jotia", sans-serif;
+  /* Czech secondary font stack using Graphik Web with Verdana fallback, ensuring clear readability for Czech body text with diacritics. */
+  --f-base-type-family-cs-secondary: "Graphik Web", "Verdana", sans-serif;
+  /* Primary font stack for Romanian (ro) language: Noto Sans as the preferred font, Jotia as fallback, with sans-serif generic family. */
+  --f-base-type-family-ro-primary: "Noto Sans", "Jotia", sans-serif;
+  /* Secondary font stack for Romanian (ro) language: Graphik Web as the preferred font, Verdana as fallback, with sans-serif generic family. */
+  --f-base-type-family-ro-secondary: "Graphik Web", "Verdana", sans-serif;
+  /* Primary font stack for Serbian (sr) language: Noto Sans as the preferred font, Jotia as fallback, with sans-serif generic family. */
+  --f-base-type-family-sr-primary: "Noto Sans", "Jotia", sans-serif;
+  /* Secondary font stack for Serbian (sr) language: Graphik Web as the preferred font, Verdana as fallback, with sans-serif generic family. */
+  --f-base-type-family-sr-secondary: "Graphik Web", "Verdana", sans-serif;
+
+  /* --- Typography (Weight) --- */
+
+  /* A feather-light font weight (100) for delicate typography that creates subtle visual hierarchy. */
+  --f-base-type-weight-thin: 100;
+  /* A light font weight (300) that provides gentle emphasis while maintaining readability. */
+  --f-base-type-weight-light: 300;
+  /* The standard font weight (400) for balanced body text and core typographic elements. */
+  --f-base-type-weight-regular: 400;
+  /* A medium font weight (500) that adds noticeable emphasis without being bold. */
+  --f-base-type-weight-medium: 500;
+
+  /* --- Typography (Line Height) --- */
+
+  /* A compact line height of 16px, the smallest in the type scale, providing tight vertical spacing for dense text. */
+  --f-base-type-line-height-1: 16px;
+  /* A moderate line height of 20px, offering balanced vertical spacing for readable subheadings and small interactive text. */
+  --f-base-type-line-height-2: 20px;
+  /* A standard line height of 24px, providing comfortable vertical spacing for body text and standard interactive elements. */
+  --f-base-type-line-height-3: 24px;
+  /* A line height of 24px, matching scale position 3 but used for distinct typographic roles like headlines and medium numerals. */
+  --f-base-type-line-height-4: 24px;
+  /* A generous line height of 32px, offering ample vertical spacing for titles and numeral sets, enhancing visual hierarchy. */
+  --f-base-type-line-height-5: 32px;
+  /* A spacious line height of 36px, providing substantial vertical spacing for large titles and page-level elements. */
+  --f-base-type-line-height-6: 36px;
+  /* An expansive line height of 48px, offering dramatic vertical spacing for the largest titles and page headers. */
+  --f-base-type-line-height-7: 48px;
+  /* A massive line height of 56px, providing extreme vertical spacing for oversized page titles and thin variants. */
+  --f-base-type-line-height-8: 56px;
+  /* An oversized line height of 64px, the second-largest in the scale, reserved for exceptional typographic scenarios requiring vast spacing. */
+  --f-base-type-line-height-9: 64px;
+  /* A monumental line height of 72px, the largest in the type scale, offering maximum vertical spacing for extreme display contexts. */
+  --f-base-type-line-height-10: 72px;
+  /* A unitless line-height multiplier of 1.2 that establishes consistent vertical rhythm across all typography. */
+  --f-base-type-line-height-factor: 1.2px;
+
+  /* --- Typography (Scale) --- */
+
+  /* A 12px font size representing the smallest step in the type scale, used for compact text elements like captions and numerals. */
+  --f-base-type-scale-1: 12px;
+  /* 14px font size, the second-smallest step in the type scale for compact text. */
+  --f-base-type-scale-2: 14px;
+  /* 16px font size, a mid-small scale step suitable for standard body text. */
+  --f-base-type-scale-3: 16px;
+  /* 18px font size, a moderate scale step for emphasized headlines. */
+  --f-base-type-scale-4: 18px;
+  /* 24px font size, a large scale step for prominent titles and numerals. */
+  --f-base-type-scale-5: 24px;
+  /* 28px font size, an extra-large scale step for major headings. */
+  --f-base-type-scale-6: 28px;
+  /* 32px font size, a jumbo scale step for page titles and largest numerals. */
+  --f-base-type-scale-7: 32px;
+  /* 36px font size, a massive scale step for the largest title variants. */
+  --f-base-type-scale-8: 36px;
+  /* 48px font size, an enormous scale step for oversized page titles. */
+  --f-base-type-scale-9: 48px;
+  /* 56px font size, a colossal scale step for extreme typographic emphasis. */
+  --f-base-type-scale-10: 56px;
+  /* 64px font size, the maximum scale step for monumental typography. */
+  --f-base-type-scale-11: 64px;
+
+  /* --- Shadow --- */
+
+  /* A transparent shadow with zero offset, blur, and spread, using a fully transparent grey color (#1F212B00). */
+  --f-base-shadow-0: 0 0 0 0 var(--f-base-color-solid-grey-900-0A);
+  /* A medium shadow with 0px horizontal offset, 2px vertical offset, 8px blur radius, and a default shadow color. */
+  --f-base-shadow-1: 0 2px var(--f-base-blur-1) var(--f-brand-color-shadow-default);
+  /* A large shadow with 0px horizontal offset, 8px vertical offset, 20px blur radius, and a default shadow color. */
+  --f-base-shadow-2: 0 var(--f-base-space-2) var(--f-base-blur-2) var(--f-brand-color-shadow-default);
+  /* A medium upward shadow with 0px horizontal offset, -2px vertical offset, 8px blur radius, and a default shadow color. */
+  --f-base-shadow-1n: 0 -2px var(--f-base-blur-1) var(--f-brand-color-shadow-default);
+
+  /* ============================================
+   * BRAND TOKENS
+   * ============================================
+   * Semantic design tokens that reference base tokens.
+   * These tokens provide meaning and context for design decisions.
+   *
+   * Categories:
+   * 1. Blur
+   * 2. Border
+   * 3. Color
+   * 4. Opacity
+   * 5. Radius
+   * 6. Shadow
+   * 7. Size
+   * 8. Space
+   * 9. Typography
+   * ============================================ */
+
+  /* A subtle blur effect (8px) that creates gentle visual separation without heavy distortion. Resolves to 8px. */
+  --f-brand-blur-subtle: var(--f-base-blur-1);
+  /* A medium blur effect (20px) that provides noticeable visual separation while maintaining content legibility. Resolves to 20px. */
+  --f-brand-blur-medium: var(--f-base-blur-2);
+  /* A zero-width border that creates a seamless visual edge, eliminating visible separation between elements. Resolves to 0px. */
+  --f-brand-border-size-none: var(--f-base-border-size-0);
+  /* A standard 1px border that provides subtle visual separation without overwhelming the interface. Resolves to 1px. */
+  --f-brand-border-size-default: var(--f-base-border-size-1);
+  /* A prominent 2px border that creates strong visual emphasis for focused interactive elements. Resolves to 2px. */
+  --f-brand-border-size-focused: var(--f-base-border-size-2);
+  /* A zero-radius corner treatment that creates sharp, angular edges for UI elements, defined as 0px. Resolves to 0px. */
+  --f-brand-radius-none: var(--f-base-radius-none);
+  /* An extra-small corner radius of 4px, providing barely perceptible rounding for compact UI elements. */
+  --f-brand-radius-xsmall: 4px;
+  /* The foundational corner radius at 8px, establishing the baseline curvature for UI elements. Resolves to 8px. */
+  --f-brand-radius-base: var(--f-base-radius-sm);
+  /* A small corner radius at 12px, providing gentle rounding for compact interactive elements. Resolves to 12px. */
+  --f-brand-radius-small: var(--f-base-radius-md);
+  /* An inner corner radius at 16px, creating pronounced rounding for contained surfaces and nested components. Resolves to 16px. */
+  --f-brand-radius-inner: var(--f-base-radius-lg);
+  /* An outer corner radius at 20px, delivering substantial curvature for prominent container edges. Resolves to 20px. */
+  --f-brand-radius-outer: var(--f-base-radius-xl);
+  /* A fully rounded corner radius at 64px, achieving pill-shaped or circular appearances for maximum curvature. Resolves to 64px. */
+  --f-brand-radius-rounded: var(--f-base-radius-full);
+  /* Primary brand burgundy (#8E2157), used for interactive elements and core brand identity. Resolves to #8E2157. */
+  --f-brand-color-primary: var(--f-base-color-solid-burgundy-400);
+  /* Darker burgundy (#5c0931) for hover states on primary interactive elements. Resolves to #5c0931. */
+  --f-brand-color-primary-hover: var(--f-base-color-solid-burgundy-900);
+  /* Accent violet (#3a35af) for secondary emphasis and distinct interactive contexts. Resolves to #3a35af. */
+  --f-brand-color-accent: var(--f-base-color-solid-violet-900);
+  /* Muted violet (#7f6caf) for subtle accent backgrounds or low-emphasis contexts. Resolves to #7f6caf. */
+  --f-brand-color-accent-muted: var(--f-base-color-solid-violet-100);
+  /* Near-black (#090A0D) at 70% opacity for deep overlay surfaces that dim underlying content. Resolves to #090A0DB2. */
+  --f-brand-color-overlay: var(--f-base-color-solid-grey-980-70A);
+  /* A light grey (#F2F3FA) background for standard UI surfaces and default contexts. Resolves to #F2F3FA. */
+  --f-brand-color-background-default: var(--f-base-color-solid-grey-100-new);
+  /* Pure white (#ffffff) background for bright, clean UI contexts. Resolves to #ffffff. */
+  --f-brand-color-background-light: var(--f-base-color-solid-white-100);
+  /* A muted grey (#DBDEE8) background for disabled UI elements. Resolves to #DBDEE8. */
+  --f-brand-color-background-disabled: var(--f-base-color-solid-grey-200);
+  /* Near-black (#090A0D) at 70% opacity for deep overlay backgrounds. Resolves to #090A0DB2. */
+  --f-brand-color-background-overlay: var(--f-base-color-solid-grey-980-70A);
+  /* A completely transparent background (#1F212B00) using dark grey with 0% alpha. Resolves to #1F212B00. */
+  --f-brand-color-background-transparent: var(--f-base-color-solid-grey-900-0A);
+  /* A dark grey (#1F212B) background for dark-themed UI contexts. Resolves to #1F212B. */
+  --f-brand-color-background-dark: var(--f-base-color-solid-grey-900);
+  /* A transparent dark grey (#1F212B00) background with 0% alpha, identical to the transparent token. Resolves to #1F212B00. */
+  --f-brand-color-background-dark-0a: var(--f-base-color-solid-grey-900-0A);
+  /* A semi-transparent dark grey (#1F212B66) background with 40% alpha. Resolves to #1F212B66. */
+  --f-brand-color-background-dark-40a: var(--f-base-color-solid-grey-900-40A);
+  /* A medium-transparent dark grey (#1F212B80) background with 50% alpha. Resolves to #1F212B80. */
+  --f-brand-color-background-dark-50a: var(--f-base-color-solid-grey-900-50A);
+  /* A mostly opaque dark grey (#1F212BB2) background with 70% alpha. Resolves to #1F212BB2. */
+  --f-brand-color-background-dark-70a: var(--f-base-color-solid-grey-900-70A);
+  /* A fully transparent background (#1F212B00) for contexts requiring no visible background. Resolves to #1F212B00. */
+  --f-brand-color-background-none: var(--f-base-color-solid-grey-900-0A);
+  /* A rich burgundy background (#8E2157) for primary interactive elements. Resolves to #8E2157. */
+  --f-brand-color-background-primary: var(--f-base-color-solid-burgundy-400);
+  /* A deep burgundy background (#5c0931) for hover states on primary elements. Resolves to #5c0931. */
+  --f-brand-color-background-primary-hover: var(--f-base-color-solid-burgundy-900);
+  /* A semi-transparent dark grey background (#1F212B66) for blurred or frosted glass effects. Resolves to #1F212B66. */
+  --f-brand-color-background-blur: var(--f-base-color-solid-grey-900-40A);
+  /* A neutral grey background (#4A525D) for subdued or secondary surfaces. Resolves to #4A525D. */
+  --f-brand-color-background-muted: var(--f-base-color-solid-grey-600);
+  /* A deep burgundy background (#780044) for loyalty program tiers. Resolves to #780044. */
+  --f-brand-color-background-loyalty-burgundy: var(--f-base-color-solid-loyalty-burgundy-400);
+  /* A medium grey background (#787878) for silver-tier loyalty elements. Resolves to #787878. */
+  --f-brand-color-background-loyalty-silver: var(--f-base-color-solid-loyalty-silver-400);
+  /* A warm gold background (#8c5617) for gold-tier loyalty elements. Resolves to #8c5617. */
+  --f-brand-color-background-loyalty-gold: var(--f-base-color-solid-loyalty-gold-400);
+  /* A near-black background (#1a1a1a) for platinum-tier loyalty elements. Resolves to #1a1a1a. */
+  --f-brand-color-background-loyalty-platinum: var(--f-base-color-solid-loyalty-platinum-900);
+  /* A vibrant violet background (#3a35af) for accent or highlight contexts. Resolves to #3a35af. */
+  --f-brand-color-background-accent: var(--f-base-color-solid-violet-900);
+  /* A soft violet background (#7f6caf) for subtle accent contexts that require gentle visual emphasis without high contrast. Resolves to #7f6caf. */
+  --f-brand-color-background-accent-muted: var(--f-base-color-solid-violet-100);
+  /* A neutral grey background (#9099a2) for disabled accent states, providing clear visual deactivation while maintaining accessibility. Resolves to #9099A2. */
+  --f-brand-color-background-accent-disabled: var(--f-base-color-solid-grey-400);
+  /* A deep green background (#328256) for success contexts, conveying positive outcomes with strong visual prominence. Resolves to #328256. */
+  --f-brand-color-background-success: var(--f-base-color-solid-green-900);
+  /* A light green background (#ecfff5) for accenting success elements, providing a subtle, supportive highlight. Resolves to #ECFFF5. */
+  --f-brand-color-background-success-accent: var(--f-base-color-solid-green-100);
+  /* A deep red background (#CC4726) for error contexts, signaling issues or failures with immediate visual attention. Resolves to #cc4726. */
+  --f-brand-color-background-error: var(--f-base-color-solid-red-900);
+  /* A yellow background (#fcc500) for warning contexts, indicating caution or attention needed with a bright, noticeable hue. Resolves to #fcc500. */
+  --f-brand-color-background-warning: var(--f-base-color-solid-yellow-100);
+  /* A warm coral-orange (#F47758) background for notification badges and counters that need to grab attention. Resolves to #F47758. */
+  --f-brand-color-background-notification: var(--f-base-color-solid-orange-400);
+  /* A mostly transparent dark grey (#1F212B) background with 20% alpha, creating a barely visible dark wash. Resolves to #1F212B33. */
+  --f-brand-color-background-dark-20a: var(--f-base-color-solid-grey-900-20A);
+  /* A translucent white (#FFFFFF) background with 80% alpha, creating a frosted glass effect over dark or coloured surfaces. Resolves to #FFFFFFCC. */
+  --f-brand-color-background-light-80a: var(--f-base-color-solid-white-100-80A);
+  /* The lightest elevation background, providing maximum brightness for top-layer surfaces. Resolves to #ffffff. */
+  --f-brand-color-background-lightest: var(--f-base-color-solid-white-100);
+  /* A static pure white (#FFFFFF) background token that never changes between light and dark themes. Named "onDark" to make intent explicit — use this when the surface must always appear on a dark or coloured backdrop. Resolves to #FFFFFF. */
+  --f-brand-color-background-ondark: var(--f-base-color-solid-white-100);
+  /* A deep, saturated red (#cc4726) that conveys urgency and critical failure states within the system. Resolves to #cc4726. */
+  --f-brand-color-status-error: var(--f-base-color-solid-red-900);
+  /* A rich, earthy green (#328256) that communicates positive outcomes and completion states. Resolves to #328256. */
+  --f-brand-color-status-success: var(--f-base-color-solid-green-900);
+  /* A deep, mustard yellow (#7a5e00) that signals caution and attention-required states. Resolves to #B68E00. */
+  --f-brand-color-status-warning: var(--f-base-color-solid-yellow-900);
+  /* A light grey (#F2F3FA) border color designed for inner contexts, creating subtle visual separation within contained elements. Resolves to #F2F3FA. */
+  --f-brand-color-border-inner: var(--f-base-color-solid-grey-100-new);
+  /* A light grey (#DBDEE8) border for standard UI separators, providing a neutral visual division. Resolves to #DBDEE8. */
+  --f-brand-color-border-default: var(--f-base-color-solid-grey-200);
+  /* A dark grey (#4A525D) border for muted contexts, offering stronger contrast while remaining subdued. Resolves to #4A525D. */
+  --f-brand-color-border-muted: var(--f-base-color-solid-grey-600);
+  /* A semi-transparent grey (#9DACBC99) border for subtle visual hints, blending softly with backgrounds. Resolves to #9DACBC99. */
+  --f-brand-color-border-subtle: var(--f-base-color-solid-grey-300-60A);
+  /* A pure white (#ffffff) border for light-themed contexts, creating clean contrasts on dark backgrounds. Resolves to #ffffff. */
+  --f-brand-color-border-light: var(--f-base-color-solid-white-100);
+  /* A medium grey (#9099A2) border for disabled states, signaling non-interactivity with reduced prominence. Resolves to #9099A2. */
+  --f-brand-color-border-disabled: var(--f-base-color-solid-grey-400);
+  /* A burgundy (#8E2157) border for primary brand interactions, aligning with core accent colors. Resolves to #8E2157. */
+  --f-brand-color-border-primary: var(--f-brand-color-primary);
+  /* A deep burgundy (#5c0931) border for primary hover states, providing a darker visual feedback. Resolves to #5c0931. */
+  --f-brand-color-border-primary-hover: var(--f-brand-color-primary-hover);
+  /* A near-black grey (#1F212B) border for selected states, offering high contrast to indicate active selection. Resolves to #1F212B. */
+  --f-brand-color-border-selected: var(--f-base-color-solid-grey-900);
+  /* A deep green (#328256) border for success contexts, conveying positive outcomes or validations. Resolves to #328256. */
+  --f-brand-color-border-success: var(--f-base-color-solid-green-900);
+  /* A deep red (#CC4726) border for error contexts, signaling issues or warnings with clear visual urgency. Resolves to #cc4726. */
+  --f-brand-color-border-error: var(--f-base-color-solid-red-900);
+  /* A vibrant yellow (#fcc500) border that signals caution or attention-required states in the UI. Resolves to #fcc500. */
+  --f-brand-color-border-warning: var(--f-base-color-solid-yellow-100);
+  /* A deep violet (#3a35af) border that provides subtle brand accenting for interactive elements. Resolves to #3a35af. */
+  --f-brand-color-border-accent: var(--f-brand-color-accent);
+  /* A near-black dark grey (#1F212B) border that creates high-contrast focus indicators for accessibility. Resolves to #1F212B. */
+  --f-brand-color-border-focused: var(--f-base-color-solid-grey-900);
+  /* A near-black dark grey (#1F212B) border that provides subtle visual feedback during hover interactions. Resolves to #1F212B. */
+  --f-brand-color-border-hover: var(--f-base-color-solid-grey-900);
+  /* A static pure white (#ffffff) border token that never changes between light and dark themes. Named "onDark" to make intent explicit — this is for borders on dark or coloured surfaces. Resolves to #ffffff. */
+  --f-brand-color-border-ondark: var(--f-base-color-solid-white-100);
+  /* A translucent white (#FFFFFF) border with 80% alpha for frosted glass or elevated surface edges. Resolves to #FFFFFFCC. */
+  --f-brand-color-border-light-80a: var(--f-base-color-solid-white-100-80A);
+  /* A bright green (#34db80) representing successful or confirmed flight statuses, providing positive visual feedback. Resolves to #34db80. */
+  --f-brand-color-flight-status-confirmed: var(--f-base-color-solid-green-200);
+  /* A muted red (#d95757) indicating cancelled flight statuses, conveying disruption or negative outcomes. Resolves to #d95757. */
+  --f-brand-color-flight-status-cancelled: var(--f-base-color-solid-red-100);
+  /* A vibrant yellow (#fcc500) signaling delayed flight statuses, creating attention for schedule changes. Resolves to #fcc500. */
+  --f-brand-color-flight-status-delayed: var(--f-base-color-solid-yellow-100);
+  /* A light silver (#f0f0f0) representing rescheduled flight statuses, offering neutral visual treatment for modified plans. Resolves to #f0f0f0. */
+  --f-brand-color-flight-status-rescheduled: var(--f-base-color-solid-loyalty-silver-100);
+  /* A deep burgundy (#8E2157) used to visually identify Qsuite-related tags, inheriting the primary brand color for consistent emphasis. Resolves to #8E2157. */
+  --f-brand-color-tags-qsuite: var(--f-brand-color-primary);
+  /* A dark forest green (#328256) used to denote lowest-fare tags, providing a distinct color for pricing or promotional contexts. Resolves to #328256. */
+  --f-brand-color-tags-lowest-fare: var(--f-base-color-solid-green-900);
+  /* A deep gold (#8c5617) that conveys premium status and exclusivity for tag elements. Resolves to #8c5617. */
+  --f-brand-color-tags-business-class: var(--f-base-color-solid-loyalty-gold-400);
+  /* A near-black dark grey (#1F212B) that provides subtle emphasis for recommended or endorsed content in tags. Resolves to #1F212B. */
+  --f-brand-color-tags-recommended: var(--f-base-color-solid-grey-900);
+  /* A near-black dark grey (#1F212B) for standard text, providing high contrast and readability in default contexts. Resolves to #1F212B. */
+  --f-brand-color-text-default: var(--f-base-color-solid-grey-900);
+  /* A burgundy accent color (#8E2157) for primary text, adding brand emphasis and visual distinction. Resolves to #8E2157. */
+  --f-brand-color-text-primary: var(--f-brand-color-primary);
+  /* A medium-dark grey (#4A525D) for muted text, reducing visual weight while maintaining legibility. Resolves to #4A525D. */
+  --f-brand-color-text-muted: var(--f-base-color-solid-grey-600);
+  /* A light grey (#9099A2) for disabled text, indicating non-interactive states with reduced contrast. Resolves to #9099A2. */
+  --f-brand-color-text-disabled: var(--f-base-color-solid-grey-400);
+  /* A saturated red (#CC4726) for error text, conveying urgency and alerting users to problems. Resolves to #cc4726. */
+  --f-brand-color-text-error: var(--f-base-color-solid-red-900);
+  /* Pure white (#FFFFFF) for light text, ensuring readability on dark or colored backgrounds. Resolves to #ffffff. */
+  --f-brand-color-text-light: var(--f-base-color-solid-white-100);
+  /* A near-black dark grey (#1F212B) for link text, matching the default text color for consistency. Resolves to #1F212B. */
+  --f-brand-color-text-link: var(--f-base-color-solid-grey-900);
+  /* A near-black dark grey (#1F212B) for heading text, aligning with default text for a cohesive typographic scale. Resolves to #1F212B. */
+  --f-brand-color-text-heading: var(--f-base-color-solid-grey-900);
+  /* A medium grey (#6E7780) for subtle text, offering minimal contrast for tertiary content. Resolves to #6E7780. */
+  --f-brand-color-text-subtle: var(--f-base-color-solid-grey-500);
+  /* A deep green (#328256) for success text, signaling positive outcomes and confirmations. Resolves to #328256. */
+  --f-brand-color-text-success: var(--f-base-color-solid-green-900);
+  /* A deep mustard yellow (#7a5e00) used for text in warning contexts, conveying caution and attention. Resolves to #B68E00. */
+  --f-brand-color-text-warning: var(--f-base-color-solid-yellow-900);
+  /* A rich burgundy (#780044) for text in loyalty program contexts, evoking premium and exclusive brand identity. Resolves to #780044. */
+  --f-brand-color-text-loyalty-burgundy: var(--f-base-color-solid-loyalty-burgundy-400);
+  /* A neutral gray (#787878) for text in loyalty program contexts, representing the silver tier with a subtle, modern appearance. Resolves to #787878. */
+  --f-brand-color-text-loyalty-silver: var(--f-base-color-solid-loyalty-silver-400);
+  /* A dark golden brown (#644316) for text in loyalty program contexts, symbolizing the gold tier with a warm, prestigious feel. Resolves to #644316. */
+  --f-brand-color-text-loyalty-gold: var(--f-base-color-solid-loyalty-gold-900);
+  /* A near-black dark gray (#1a1a1a) for text in loyalty program contexts, representing the platinum tier with a sophisticated, high-contrast look. Resolves to #1a1a1a. */
+  --f-brand-color-text-loyalty-platinum: var(--f-base-color-solid-loyalty-platinum-900);
+  /* A static pure white (#ffffff) text token that never changes between light and dark themes. Named "onDark" to make intent explicit — this is for text placed on dark or coloured surfaces. Resolves to #ffffff. */
+  --f-brand-color-text-ondark: var(--f-base-color-solid-white-100);
+  /* A translucent white (#FFFFFF) text colour with 80% alpha for secondary or subdued text on dark or image surfaces. Resolves to #FFFFFFCC. */
+  --f-brand-color-text-light-80a: var(--f-base-color-solid-white-100-80A);
+  /* A near-black dark charcoal (#1F212B) that provides standard icon visibility across most UI surfaces. Resolves to #1F212B. */
+  --f-brand-color-icon-default: var(--f-base-color-solid-grey-900);
+  /* A rich burgundy accent color (#8E2157) that draws attention to icons representing primary actions or interactive elements. Resolves to #8E2157. */
+  --f-brand-color-icon-primary: var(--f-brand-color-primary);
+  /* A medium-dark slate gray (#4A525D) that creates subtle, low-contrast iconography for secondary or disabled states. Resolves to #4A525D. */
+  --f-brand-color-icon-muted: var(--f-base-color-solid-grey-600);
+  /* A muted grey (#9099A2) for icons in a disabled state, conveying non-interactivity. Resolves to #9099A2. */
+  --f-brand-color-icon-disabled: var(--f-base-color-solid-grey-400);
+  /* A bold red (#CC4726) for error icons, providing high visual contrast to signal issues. Resolves to #cc4726. */
+  --f-brand-color-icon-error: var(--f-base-color-solid-red-900);
+  /* Pure white (#FFFFFF) for icons on dark backgrounds, ensuring legibility and contrast. Resolves to #ffffff. */
+  --f-brand-color-icon-light: var(--f-base-color-solid-white-100);
+  /* A deep green (#328256) for success icons, conveying positive outcomes and confirmation. Resolves to #328256. */
+  --f-brand-color-icon-success: var(--f-base-color-solid-green-900);
+  /* A rich yellow (#7A5E00) for warning icons, indicating caution or attention-needed states. Resolves to #B68E00. */
+  --f-brand-color-icon-warning: var(--f-base-color-solid-yellow-900);
+  /* A burgundy (#8E2157) for loyalty program icons, aligning with the primary brand color for emphasis. Resolves to #8E2157. */
+  --f-brand-color-icon-loyalty-burgundy: var(--f-brand-color-primary);
+  /* A neutral silver (#787878) for loyalty program icons, representing the silver membership tier. Resolves to #787878. */
+  --f-brand-color-icon-loyalty-silver: var(--f-base-color-solid-loyalty-silver-400);
+  /* A warm gold (#8C5617) for loyalty program icons, signifying the gold membership tier. Resolves to #8c5617. */
+  --f-brand-color-icon-loyalty-gold: var(--f-base-color-solid-loyalty-gold-400);
+  /* A dark platinum (#1A1A1A) for loyalty program icons, denoting the highest platinum tier. Resolves to #1a1a1a. */
+  --f-brand-color-icon-loyalty-platinum: var(--f-base-color-solid-loyalty-platinum-900);
+  /* A static pure white (#ffffff) icon token that never changes between light and dark themes. Named "onDark" to make intent explicit — this is for icons on dark or coloured surfaces. Resolves to #ffffff. */
+  --f-brand-color-icon-ondark: var(--f-base-color-solid-white-100);
+  /* A light grey (#DBDEE8) divider color for standard separation contexts, providing subtle visual distinction between elements. Resolves to #DBDEE8. */
+  --f-brand-color-divider-default: var(--f-base-color-solid-grey-200);
+  /* A very light grey (#F2F3FA) divider color for inner or nested contexts, creating minimal visual separation within components. Resolves to #F2F3FA. */
+  --f-brand-color-divider-inner: var(--f-base-color-solid-grey-100-new);
+  /* A subtle dark grey shadow color with 8% opacity (#1F212B14), providing a soft, neutral shadow effect for default contexts. Resolves to #1F212B14. */
+  --f-brand-color-shadow-default: var(--f-base-color-solid-grey-900-08A);
+  /* Typography token for font-family */
+  --f-brand-type-title-1-font-family: var(--f-base-type-family-primary);
+  /* Typography token for font-weight */
+  --f-brand-type-title-1-font-weight: var(--f-base-type-weight-thin);
+  /* Typography token for font-size */
+  --f-brand-type-title-1-font-size: var(--f-base-type-scale-8);
+  /* Typography token for line-height */
+  --f-brand-type-title-1-line-height: var(--f-base-type-line-height-7);
+  /* Typography token for font-family */
+  --f-brand-type-title-2-font-family: var(--f-base-type-family-primary);
+  /* Typography token for font-weight */
+  --f-brand-type-title-2-font-weight: var(--f-base-type-weight-thin);
+  /* Typography token for font-size */
+  --f-brand-type-title-2-font-size: var(--f-base-type-scale-6);
+  /* Typography token for line-height */
+  --f-brand-type-title-2-line-height: var(--f-base-type-line-height-6);
+  /* Typography token for font-family */
+  --f-brand-type-title-3-font-family: var(--f-base-type-family-primary);
+  /* Typography token for font-weight */
+  --f-brand-type-title-3-font-weight: var(--f-base-type-weight-light);
+  /* Typography token for font-size */
+  --f-brand-type-title-3-font-size: var(--f-base-type-scale-6);
+  /* Typography token for line-height */
+  --f-brand-type-title-3-line-height: var(--f-base-type-line-height-6);
+  /* Typography token for font-family */
+  --f-brand-type-title-4-font-family: var(--f-base-type-family-primary);
+  /* Typography token for font-weight */
+  --f-brand-type-title-4-font-weight: var(--f-base-type-weight-thin);
+  /* Typography token for font-size */
+  --f-brand-type-title-4-font-size: var(--f-base-type-scale-5);
+  /* Typography token for line-height */
+  --f-brand-type-title-4-line-height: var(--f-base-type-line-height-5);
+  /* Typography token for font-family */
+  --f-brand-type-title-5-font-family: var(--f-base-type-family-primary);
+  /* Typography token for font-weight */
+  --f-brand-type-title-5-font-weight: var(--f-base-type-weight-light);
+  /* Typography token for font-size */
+  --f-brand-type-title-5-font-size: var(--f-base-type-scale-5);
+  /* Typography token for line-height */
+  --f-brand-type-title-5-line-height: var(--f-base-type-line-height-5);
+  /* Typography token for font-family */
+  --f-brand-type-title-6-font-family: var(--f-base-type-family-primary);
+  /* Typography token for font-weight */
+  --f-brand-type-title-6-font-weight: var(--f-base-type-weight-light);
+  /* Typography token for font-size */
+  --f-brand-type-title-6-font-size: var(--f-base-type-scale-3);
+  /* Typography token for line-height */
+  --f-brand-type-title-6-line-height: var(--f-base-type-line-height-3);
+  /* Typography token for font-family */
+  --f-brand-type-page-title-font-family: var(--f-base-type-family-primary);
+  /* Typography token for font-weight */
+  --f-brand-type-page-title-font-weight: var(--f-base-type-weight-light);
+  /* Typography token for font-size */
+  --f-brand-type-page-title-font-size: var(--f-base-type-scale-9);
+  /* Typography token for line-height */
+  --f-brand-type-page-title-line-height: var(--f-base-type-line-height-8);
+  /* Typography token for font-family */
+  --f-brand-type-page-title-thin-font-family: var(--f-base-type-family-primary);
+  /* Typography token for font-weight */
+  --f-brand-type-page-title-thin-font-weight: var(--f-base-type-weight-thin);
+  /* Typography token for font-size */
+  --f-brand-type-page-title-thin-font-size: var(--f-base-type-scale-9);
+  /* Typography token for line-height */
+  --f-brand-type-page-title-thin-line-height: var(--f-base-type-line-height-8);
+  /* Typography token for font-family */
+  --f-brand-type-headline-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-headline-font-weight: var(--f-base-type-weight-regular);
+  /* Typography token for font-size */
+  --f-brand-type-headline-font-size: var(--f-base-type-scale-4);
+  /* Typography token for line-height */
+  --f-brand-type-headline-line-height: var(--f-base-type-line-height-4);
+  /* Typography token for font-family */
+  --f-brand-type-headline-medium-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-headline-medium-font-weight: var(--f-base-type-weight-medium);
+  /* Typography token for font-size */
+  --f-brand-type-headline-medium-font-size: var(--f-base-type-scale-4);
+  /* Typography token for line-height */
+  --f-brand-type-headline-medium-line-height: var(--f-base-type-line-height-4);
+  /* Typography token for font-family */
+  --f-brand-type-body-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-body-font-weight: var(--f-base-type-weight-regular);
+  /* Typography token for font-size */
+  --f-brand-type-body-font-size: var(--f-base-type-scale-3);
+  /* Typography token for line-height */
+  --f-brand-type-body-line-height: var(--f-base-type-line-height-3);
+  /* Typography token for font-family */
+  --f-brand-type-body-medium-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-body-medium-font-weight: var(--f-base-type-weight-medium);
+  /* Typography token for font-size */
+  --f-brand-type-body-medium-font-size: var(--f-base-type-scale-3);
+  /* Typography token for line-height */
+  --f-brand-type-body-medium-line-height: var(--f-base-type-line-height-3);
+  /* Typography token for font-family */
+  --f-brand-type-subheading-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-subheading-font-weight: var(--f-base-type-weight-regular);
+  /* Typography token for font-size */
+  --f-brand-type-subheading-font-size: var(--f-base-type-scale-2);
+  /* Typography token for line-height */
+  --f-brand-type-subheading-line-height: var(--f-base-type-line-height-2);
+  /* Typography token for font-family */
+  --f-brand-type-subheading-medium-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-subheading-medium-font-weight: var(--f-base-type-weight-medium);
+  /* Typography token for font-size */
+  --f-brand-type-subheading-medium-font-size: var(--f-base-type-scale-2);
+  /* Typography token for line-height */
+  --f-brand-type-subheading-medium-line-height: var(--f-base-type-line-height-2);
+  /* Typography token for font-family */
+  --f-brand-type-caption-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-caption-font-weight: var(--f-base-type-weight-regular);
+  /* Typography token for font-size */
+  --f-brand-type-caption-font-size: var(--f-base-type-scale-1);
+  /* Typography token for line-height */
+  --f-brand-type-caption-line-height: var(--f-base-type-line-height-1);
+  /* Typography token for font-family */
+  --f-brand-type-caption-medium-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-caption-medium-font-weight: var(--f-base-type-weight-medium);
+  /* Typography token for font-size */
+  --f-brand-type-caption-medium-font-size: var(--f-base-type-scale-1);
+  /* Typography token for line-height */
+  --f-brand-type-caption-medium-line-height: var(--f-base-type-line-height-1);
+  /* Typography token for font-family */
+  --f-brand-type-link-underline-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-link-underline-font-weight: var(--f-base-type-weight-medium);
+  /* Typography token for font-size */
+  --f-brand-type-link-underline-font-size: var(--f-base-type-scale-3);
+  /* Typography token for line-height */
+  --f-brand-type-link-underline-line-height: var(--f-base-type-line-height-3);
+  /* Typography token for font-family */
+  --f-brand-type-link-underline-small-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-link-underline-small-font-weight: var(--f-base-type-weight-medium);
+  /* Typography token for font-size */
+  --f-brand-type-link-underline-small-font-size: var(--f-base-type-scale-2);
+  /* Typography token for line-height */
+  --f-brand-type-link-underline-small-line-height: var(--f-base-type-line-height-2);
+  /* Typography token for font-family */
+  --f-brand-type-link-no-underline-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-link-no-underline-font-weight: var(--f-base-type-weight-medium);
+  /* Typography token for font-size */
+  --f-brand-type-link-no-underline-font-size: var(--f-base-type-scale-3);
+  /* Typography token for line-height */
+  --f-brand-type-link-no-underline-line-height: var(--f-base-type-line-height-3);
+  /* Typography token for font-family */
+  --f-brand-type-link-no-underline-small-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-link-no-underline-small-font-weight: var(--f-base-type-weight-medium);
+  /* Typography token for font-size */
+  --f-brand-type-link-no-underline-small-font-size: var(--f-base-type-scale-2);
+  /* Typography token for line-height */
+  --f-brand-type-link-no-underline-small-line-height: var(--f-base-type-line-height-2);
+  /* Typography token for font-family */
+  --f-brand-type-numeral-1-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-numeral-1-font-weight: var(--f-base-type-weight-light);
+  /* Typography token for font-size */
+  --f-brand-type-numeral-1-font-size: var(--f-base-type-scale-7);
+  /* Typography token for line-height */
+  --f-brand-type-numeral-1-line-height: var(--f-base-type-line-height-6);
+  /* Typography token for font-family */
+  --f-brand-type-numeral-2-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-numeral-2-font-weight: var(--f-base-type-weight-light);
+  /* Typography token for font-size */
+  --f-brand-type-numeral-2-font-size: var(--f-base-type-scale-5);
+  /* Typography token for line-height */
+  --f-brand-type-numeral-2-line-height: var(--f-base-type-line-height-6);
+  /* Typography token for font-family */
+  --f-brand-type-numeral-3-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-numeral-3-font-weight: var(--f-base-type-weight-light);
+  /* Typography token for font-size */
+  --f-brand-type-numeral-3-font-size: var(--f-base-type-scale-4);
+  /* Typography token for line-height */
+  --f-brand-type-numeral-3-line-height: var(--f-base-type-line-height-4);
+  /* Typography token for font-family */
+  --f-brand-type-numeral-4-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-numeral-4-font-weight: var(--f-base-type-weight-regular);
+  /* Typography token for font-size */
+  --f-brand-type-numeral-4-font-size: var(--f-base-type-scale-3);
+  /* Typography token for line-height */
+  --f-brand-type-numeral-4-line-height: var(--f-base-type-line-height-4);
+  /* Typography token for font-family */
+  --f-brand-type-numeral-5-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-numeral-5-font-weight: var(--f-base-type-weight-regular);
+  /* Typography token for font-size */
+  --f-brand-type-numeral-5-font-size: var(--f-base-type-scale-2);
+  /* Typography token for line-height */
+  --f-brand-type-numeral-5-line-height: var(--f-base-type-line-height-2);
+  /* Typography token for font-family */
+  --f-brand-type-numeral-6-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-numeral-6-font-weight: var(--f-base-type-weight-regular);
+  /* Typography token for font-size */
+  --f-brand-type-numeral-6-font-size: var(--f-base-type-scale-1);
+  /* Typography token for line-height */
+  --f-brand-type-numeral-6-line-height: var(--f-base-type-line-height-1);
+  /* Typography token for font-family */
+  --f-brand-type-numerals-font-family: var(--f-base-type-family-secondary);
+  /* Typography token for font-weight */
+  --f-brand-type-numerals-font-weight: var(--f-base-type-weight-thin);
+  /* Typography token for font-size */
+  --f-brand-type-numerals-font-size: var(--f-base-type-scale-5);
+  /* Typography token for line-height */
+  --f-brand-type-numerals-line-height: var(--f-base-type-line-height-5);
+  /* Zero spacing for eliminating gaps between elements, representing the smallest spacing value in the brand system. Resolves to 0px. */
+  --f-brand-space-none: var(--f-base-space-0);
+  /* The smallest brand spacing at 2px, providing hairline separation below the standard 4px grid. Resolves to 2px. */
+  --f-brand-space-3xs: var(--f-base-space-micro-1);
+  /* A negative micro spacing of -2px for pulling elements closer by the smallest possible amount. Resolves to -2px. */
+  --f-brand-space-3xs-n: var(--f-base-space-micro-1n);
+  /* Extra-extra-small spacing of 4px, providing minimal separation for subtle visual hierarchy. Resolves to 4px. */
+  --f-brand-space-2xs: var(--f-base-space-1);
+  /* Extra-small spacing of 8px, offering light separation for closely related elements. Resolves to 8px. */
+  --f-brand-space-xs: var(--f-base-space-2);
+  /* Small spacing of 12px, establishing clear but modest visual breathing room between elements. Resolves to 12px. */
+  --f-brand-space-sm: var(--f-base-space-3);
+  /* Medium spacing of 16px, providing balanced visual separation for standard UI elements. Resolves to 16px. */
+  --f-brand-space-md: var(--f-base-space-4);
+  /* Large spacing of 24px, creating noticeable separation for emphasized content sections. Resolves to 24px. */
+  --f-brand-space-lg: var(--f-base-space-6);
+  /* Extra large spacing of 32px, establishing clear visual breaks between major layout regions. Resolves to 32px. */
+  --f-brand-space-xl: var(--f-base-space-8);
+  /* Double extra large spacing of 40px, providing substantial separation for prominent layout divisions. Resolves to 40px. */
+  --f-brand-space-2xl: var(--f-base-space-10);
+  /* Triple extra large spacing of 48px, creating dramatic visual separation for high-impact areas. Resolves to 48px. */
+  --f-brand-space-3xl: var(--f-base-space-12);
+  /* Quadruple extra large spacing of 64px, establishing maximum separation for monumental layout elements. Resolves to 64px. */
+  --f-brand-space-4xl: var(--f-base-space-16);
+  /* Quintuple extra large spacing of 72px, providing extreme visual separation for oversized layout components. Resolves to 72px. */
+  --f-brand-space-5xl: var(--f-base-space-18);
+  /* Sextuple extra large spacing of 80px, creating ultimate visual separation for jumbo layout elements. Resolves to 80px. */
+  --f-brand-space-6xl: var(--f-base-space-20);
+  /* Double extra small negative spacing of -4px, enabling tight visual compression for overlapping elements. Resolves to -4px. */
+  --f-brand-space-2xs-n: var(--f-base-space-1n);
+  /* Extra small negative spacing of -8px, providing moderate visual compression for overlapping components. Resolves to -8px. */
+  --f-brand-space-xs-n: var(--f-base-space-2n);
+  /* A small negative spacing value of -12px, representing the smallest negative offset in the brand's spatial system. Resolves to -12px. */
+  --f-brand-space-sm-n: var(--f-base-space-3n);
+  /* A medium negative spacing value of -16px, providing a moderate negative offset for balanced visual adjustments. Resolves to -16px. */
+  --f-brand-space-md-n: var(--f-base-space-4n);
+  /* A large negative spacing value of -24px, offering a substantial negative offset for prominent visual effects. Resolves to -24px. */
+  --f-brand-space-lg-n: var(--f-base-space-6n);
+  /* An extra-large negative spacing value of -32px, representing the largest negative offset in the brand's spatial system for maximum visual impact. Resolves to -32px. */
+  --f-brand-space-xl-n: var(--f-base-space-8n);
+  /* A 0.24s duration for immediate, near-instantaneous transitions that feel responsive and crisp. Resolves to .24s. */
+  --f-brand-motion-duration-instant: var(--f-base-motion-duration-240);
+  /* A 0.48s duration for brisk transitions that maintain a sense of speed while allowing slight perceptibility. Resolves to .48s. */
+  --f-brand-motion-duration-quick: var(--f-base-motion-duration-480);
+  /* A 0.96s duration for deliberate, flowing transitions that create a calm and approachable user experience. Resolves to .96s. */
+  --f-brand-motion-duration-gentle: var(--f-base-motion-duration-960);
+  /* A 1.2s duration for extended, leisurely transitions that emphasize patience and clarity in complex animations. Resolves to 1.2s. */
+  --f-brand-motion-duration-generous: var(--f-base-motion-duration-1200);
+  /* Error: Failed to fetch Resolves to cubic-bezier(0.4, 0, 0, 1). */
+  --f-brand-motion-easing-entry: var(--f-base-motion-easing-ease-in);
+  /* Error: Failed to fetch Resolves to cubic-bezier(0, 0, 0.08, 1). */
+  --f-brand-motion-easing-exit: var(--f-base-motion-easing-ease-out);
+  /* A balanced ease-in-out curve (cubic-bezier(0.4, 0, 0.08, 1)) that provides smooth acceleration and deceleration for brand motion. Resolves to cubic-bezier(0.4, 0, 0.08, 1). */
+  --f-brand-motion-easing-default: var(--f-base-motion-easing-ease-in-out);
+  /* A shadowless visual treatment that removes elevation entirely, creating a flat appearance with no offset, blur, or spread. Resolves to 0 0 0 0 {base.color.solid.grey.900-0A.value}. */
+  --f-brand-shadow-none: var(--f-base-shadow-0);
+  /* A subtle shadow with 2px vertical offset and 4px blur, providing gentle elevation for layered UI elements. Resolves to 0 2 {base.blur.1.value} {brand.color.shadow.default.value}. */
+  --f-brand-shadow-medium: var(--f-base-shadow-1);
+  /* A negative shadow with -2px vertical offset and 4px blur, creating upward visual lift for inset or elevated effects. Resolves to 0 -2 {base.blur.1.value} {brand.color.shadow.default.value}. */
+  --f-brand-shadow-medium-n: var(--f-base-shadow-1n);
+  /* A prominent shadow with 8px vertical offset and 16px blur, delivering strong elevation for foreground elements. Resolves to 0 {base.space.2.value} {base.blur.2.value} {brand.color.shadow.default.value}. */
+  --f-brand-shadow-large: var(--f-base-shadow-2);
+  /* A small 4px spacing increment, representing the smallest non-zero size in the brand scale. Resolves to 4px. */
+  --f-brand-size-1: var(--f-base-size-1);
+  /* An 8px spacing increment, providing a small but noticeable step up from the smallest size. Resolves to 8px. */
+  --f-brand-size-2: var(--f-base-size-2);
+  /* A zero-value size (0px) for eliminating spacing entirely. Resolves to 0px. */
+  --f-brand-size-none: var(--f-base-size-0);
+  /* A very small 4px spacing, equivalent to 'extra extra small' in the semantic size scale. Resolves to 4px. */
+  --f-brand-size-2xs: var(--f-base-size-1);
+  /* An extra-small 8px spacing, providing subtle separation for compact UI elements. Resolves to 8px. */
+  --f-brand-size-xs: var(--f-base-size-2);
+  /* A small 12px spacing, offering a balanced step for comfortable yet compact layouts. Resolves to 12px. */
+  --f-brand-size-sm: var(--f-base-size-3);
+  /* A medium 16px spacing, serving as the default base size for most layout spacing. Resolves to 16px. */
+  --f-brand-size-md: var(--f-base-size-4);
+  /* A large 24px spacing, providing ample room for emphasis and visual separation. Resolves to 24px. */
+  --f-brand-size-lg: var(--f-base-size-6);
+  /* An extra-large 32px spacing, used for dramatic visual breathing room and strong layout hierarchy. Resolves to 32px. */
+  --f-brand-size-xl: var(--f-base-size-8);
+  /* An extra-extra-large 40px spacing, the largest in the scale for maximum visual impact and openness. Resolves to 40px. */
+  --f-brand-size-2xl: var(--f-base-size-10);
+  /* Extra-large brand size at 48px, representing the third-largest scale position in the brand size hierarchy. Resolves to 48px. */
+  --f-brand-size-3xl: var(--f-base-size-12);
+  /* Massive brand size at 64px, representing the fourth-largest scale position for oversized visual elements. Resolves to 64px. */
+  --f-brand-size-4xl: var(--f-base-size-16);
+  /* Giant brand size at 96px, representing the fifth-largest scale position for monumental UI elements. Resolves to 96px. */
+  --f-brand-size-5xl: var(--f-base-size-24);
+  /* Colossal brand size at 128px, representing the sixth-largest scale position for extreme visual statements. Resolves to 128px. */
+  --f-brand-size-6xl: var(--f-base-size-32);
+  /* Titanic brand size at 192px, representing the largest scale position in the brand size system for maximum visual presence. Resolves to 192px. */
+  --f-brand-size-7xl: var(--f-base-size-48);
+  /* A 60% opacity level that creates a visually muted appearance, used to indicate disabled states where interaction is unavailable. Resolves to 0.6. */
+  --f-brand-opacity-disabled: var(--f-base-opacity-60);
+  /* A 70% opacity level that creates a semi-transparent veil, used for overlay surfaces that partially obscure underlying content. Resolves to 0.7. */
+  --f-brand-opacity-overlay: var(--f-base-opacity-70);
+  /* Composite typography token for title-1 */
+  --f-brand-type-title-1: var(--f-brand-type-title-1-font-weight) var(--f-brand-type-title-1-font-size)/var(--f-brand-type-title-1-line-height) var(--f-brand-type-title-1-font-family);
+  /* Composite typography token for title-2 */
+  --f-brand-type-title-2: var(--f-brand-type-title-2-font-weight) var(--f-brand-type-title-2-font-size)/var(--f-brand-type-title-2-line-height) var(--f-brand-type-title-2-font-family);
+  /* Composite typography token for title-3 */
+  --f-brand-type-title-3: var(--f-brand-type-title-3-font-weight) var(--f-brand-type-title-3-font-size)/var(--f-brand-type-title-3-line-height) var(--f-brand-type-title-3-font-family);
+  /* Composite typography token for title-4 */
+  --f-brand-type-title-4: var(--f-brand-type-title-4-font-weight) var(--f-brand-type-title-4-font-size)/var(--f-brand-type-title-4-line-height) var(--f-brand-type-title-4-font-family);
+  /* Composite typography token for title-5 */
+  --f-brand-type-title-5: var(--f-brand-type-title-5-font-weight) var(--f-brand-type-title-5-font-size)/var(--f-brand-type-title-5-line-height) var(--f-brand-type-title-5-font-family);
+  /* Composite typography token for title-6 */
+  --f-brand-type-title-6: var(--f-brand-type-title-6-font-weight) var(--f-brand-type-title-6-font-size)/var(--f-brand-type-title-6-line-height) var(--f-brand-type-title-6-font-family);
+  /* Largest title style for main page headers and hero sections. Highly visible and impactful */
+  --f-brand-type-page-title: var(--f-brand-type-page-title-font-weight) var(--f-brand-type-page-title-font-size)/var(--f-brand-type-page-title-line-height) var(--f-brand-type-page-title-font-family);
+  /* Largest title style for main page headers and hero sections. Highly visible and impactful. Thin weight */
+  --f-brand-type-page-title-thin: var(--f-brand-type-page-title-thin-font-weight) var(--f-brand-type-page-title-thin-font-size)/var(--f-brand-type-page-title-thin-line-height) var(--f-brand-type-page-title-thin-font-family);
+  /* Regular weight headline for standard section headers */
+  --f-brand-type-headline: var(--f-brand-type-headline-font-weight) var(--f-brand-type-headline-font-size)/var(--f-brand-type-headline-line-height) var(--f-brand-type-headline-font-family);
+  /* Medium weight headline for emphasized section headers */
+  --f-brand-type-headline-medium: var(--f-brand-type-headline-medium-font-weight) var(--f-brand-type-headline-medium-font-size)/var(--f-brand-type-headline-medium-line-height) var(--f-brand-type-headline-medium-font-family);
+  /* Standard body text for main content and paragraphs. */
+  --f-brand-type-body: var(--f-brand-type-body-font-weight) var(--f-brand-type-body-font-size)/var(--f-brand-type-body-line-height) var(--f-brand-type-body-font-family);
+  /* Medium weight body text for enhanced readability or emphasis within paragraphs. */
+  --f-brand-type-body-medium: var(--f-brand-type-body-medium-font-weight) var(--f-brand-type-body-medium-font-size)/var(--f-brand-type-body-medium-line-height) var(--f-brand-type-body-medium-font-family);
+  /* Regular weight subheading for standard subsection titles */
+  --f-brand-type-subheading: var(--f-brand-type-subheading-font-weight) var(--f-brand-type-subheading-font-size)/var(--f-brand-type-subheading-line-height) var(--f-brand-type-subheading-font-family);
+  /* Medium weight subheading for emphasized subsection titles */
+  --f-brand-type-subheading-medium: var(--f-brand-type-subheading-medium-font-weight) var(--f-brand-type-subheading-medium-font-size)/var(--f-brand-type-subheading-medium-line-height) var(--f-brand-type-subheading-medium-font-family);
+  /* Medium weight caption for emphasized supplementary text */
+  --f-brand-type-caption: var(--f-brand-type-caption-font-weight) var(--f-brand-type-caption-font-size)/var(--f-brand-type-caption-line-height) var(--f-brand-type-caption-font-family);
+  /* Regular weight caption for standard supplementary text, footnotes, or image descriptions */
+  --f-brand-type-caption-medium: var(--f-brand-type-caption-medium-font-weight) var(--f-brand-type-caption-medium-font-size)/var(--f-brand-type-caption-medium-line-height) var(--f-brand-type-caption-medium-font-family);
+  /* Standard underlined link style for clear interactive elements */
+  --f-brand-type-link-underline: var(--f-brand-type-link-underline-font-weight) var(--f-brand-type-link-underline-font-size)/var(--f-brand-type-link-underline-line-height) var(--f-brand-type-link-underline-font-family);
+  /* Smaller underlined link style for less prominent interactive elements */
+  --f-brand-type-link-underline-small: var(--f-brand-type-link-underline-small-font-weight) var(--f-brand-type-link-underline-small-font-size)/var(--f-brand-type-link-underline-small-line-height) var(--f-brand-type-link-underline-small-font-family);
+  /* Non-underlined link style for subtle interactive elements */
+  --f-brand-type-link-no-underline: var(--f-brand-type-link-no-underline-font-weight) var(--f-brand-type-link-no-underline-font-size)/var(--f-brand-type-link-no-underline-line-height) var(--f-brand-type-link-no-underline-font-family);
+  /* Smaller non-underlined link style for prominent yet subtle interactive elements */
+  --f-brand-type-link-no-underline-small: var(--f-brand-type-link-no-underline-small-font-weight) var(--f-brand-type-link-no-underline-small-font-size)/var(--f-brand-type-link-no-underline-small-line-height) var(--f-brand-type-link-no-underline-small-font-family);
+  /* Largest numeral style for high-impact statistical displays or counters */
+  --f-brand-type-numeral-1: var(--f-brand-type-numeral-1-font-weight) var(--f-brand-type-numeral-1-font-size)/var(--f-brand-type-numeral-1-line-height) var(--f-brand-type-numeral-1-font-family);
+  /* Medium-large numeral style for prominent numerical information */
+  --f-brand-type-numeral-2: var(--f-brand-type-numeral-2-font-weight) var(--f-brand-type-numeral-2-font-size)/var(--f-brand-type-numeral-2-line-height) var(--f-brand-type-numeral-2-font-family);
+  /* Smaller numeral style for integrated numerical displays within content */
+  --f-brand-type-numeral-3: var(--f-brand-type-numeral-3-font-weight) var(--f-brand-type-numeral-3-font-size)/var(--f-brand-type-numeral-3-line-height) var(--f-brand-type-numeral-3-font-family);
+  /* Smaller numeral style for integrated numerical displays within content */
+  --f-brand-type-numeral-4: var(--f-brand-type-numeral-4-font-weight) var(--f-brand-type-numeral-4-font-size)/var(--f-brand-type-numeral-4-line-height) var(--f-brand-type-numeral-4-font-family);
+  /* Smaller numeral style for integrated numerical displays within content */
+  --f-brand-type-numeral-5: var(--f-brand-type-numeral-5-font-weight) var(--f-brand-type-numeral-5-font-size)/var(--f-brand-type-numeral-5-line-height) var(--f-brand-type-numeral-5-font-family);
+  /* Smallest numeral style for minimal numerical displays within content */
+  --f-brand-type-numeral-6: var(--f-brand-type-numeral-6-font-weight) var(--f-brand-type-numeral-6-font-size)/var(--f-brand-type-numeral-6-line-height) var(--f-brand-type-numeral-6-font-family);
+  /* Composite typography token for numerals */
+  --f-brand-type-numerals: var(--f-brand-type-numerals-font-weight) var(--f-brand-type-numerals-font-size)/var(--f-brand-type-numerals-line-height) var(--f-brand-type-numerals-font-family);
+
+  /* ============================================
+   * BUTTON COMPONENT TOKENS
+   * ============================================
+   * Component-specific design tokens for button components.
+   * These tokens reference semantic/brand tokens to maintain consistency.
+   * ============================================ */
+
+  /* The corner radius for all button shapes, aliasing brand/border/radius/rounded — gives all button variants their fully rounded, pill-like form. Replaces the deprecated button/border-radius token. Resolves to 64px. */
+  --f-button-base-border-radius: var(--f-brand-border-radius-rounded);
+  /* Font family for the button base group, aliasing brand/type/body-medium — establishes the secondary typeface for button label text across all variants. Resolves to Graphik,Graphik Web,Arial,sans-serif. */
+  --f-button-base-font-family: var(--f-brand-type-body-medium-font-family);
+  /* Font size for the button base group, aliasing brand/type/body-medium — sizes button label text consistently with the body-medium scale for comfortable readability. Resolves to 16px. */
+  --f-button-base-font-size: var(--f-brand-type-body-medium-font-size);
+  /* Font weight for the button base group, aliasing brand/type/body-medium — applies medium weight to all button labels for legible, prominent interactive text. Resolves to 500. */
+  --f-button-base-font-weight: var(--f-brand-type-body-medium-font-weight);
+  /* The base padding for all button variants, aliasing brand/space/md — provides comfortable internal spacing between the button label and its border. Resolves to 16px. */
+  --f-button-base-padding: var(--f-brand-space-md);
+  /* A deep burgundy (#8E2157) that provides the primary button's solid background color, establishing visual prominence and brand identity. Resolves to #8E2157. */
+  --f-button-primary-background: var(--f-brand-color-background-primary);
+  /* A darker burgundy (#5c0931) that deepens the primary button's background during hover interactions, providing clear visual feedback. Resolves to #5c0931. */
+  --f-button-primary-background-hover: var(--f-brand-color-primary-hover);
+  /* A deep burgundy (#8E2157) border that matches the primary button's background, creating a cohesive solid appearance. Resolves to #8E2157. */
+  --f-button-primary-border: var(--f-brand-color-border-primary);
+  /* A medium gray (#9099A2) border that mutes disabled primary buttons, visually indicating non-interactive status. Resolves to #9099A2. */
+  --f-button-primary-border-disabled: var(--f-brand-color-border-disabled);
+  /* A darker burgundy (#5c0931) border that deepens during hover, aligning with the background-hover color for visual consistency. Resolves to #5c0931. */
+  --f-button-primary-border-hover: var(--f-brand-color-primary-hover);
+  /* Pure white (#ffffff) icon color that ensures clear visibility against the burgundy primary button background. Resolves to #ffffff. */
+  --f-button-primary-icon: var(--f-brand-color-icon-light);
+  /* Pure white (#ffffff) text color that ensures high readability against the burgundy primary button background. Resolves to #ffffff. */
+  --f-button-primary-text: var(--f-brand-color-text-light);
+  /* A medium gray (#9099A2) that mutes the text color for disabled primary buttons, signaling non-interactive state. Resolves to #9099A2. */
+  --f-button-primary-text-disabled: var(--f-brand-color-text-disabled);
+  /* Pure white (#ffffff) text color that remains consistent during hover states, maintaining readability as the background darkens. Resolves to #ffffff. */
+  --f-button-primary-text-hover: var(--f-brand-color-text-light);
+  /* Transparent background (#1F212B00) for secondary buttons, creating a subtle outline appearance. Resolves to #1F212B00. */
+  --f-button-secondary-background: var(--f-brand-color-background-transparent);
+  /* Light grey background (#F2F3FA) for secondary buttons in hover state, providing subtle visual feedback. Resolves to #F2F3FA. */
+  --f-button-secondary-background-hover: var(--f-brand-color-background-default);
+  /* Burgundy border color (#8E2157) for secondary buttons, creating a defined outline that matches brand primary colors. Resolves to #8E2157. */
+  --f-button-secondary-border: var(--f-brand-color-border-primary);
+  /* A muted grey border (#9099A2) that visually de-emphasizes secondary buttons in disabled states. Resolves to #9099A2. */
+  --f-button-secondary-border-disabled: var(--f-brand-color-border-disabled);
+  /* Burgundy border color (#8E2157) for secondary buttons in hover state, maintaining consistency with default border. Resolves to #8E2157. */
+  --f-button-secondary-border-hover: var(--f-brand-color-border-primary);
+  /* A burgundy accent color (#8E2157) for icons within secondary buttons, providing brand-aligned visual emphasis. Resolves to #8E2157. */
+  --f-button-secondary-icon: var(--f-brand-color-icon-primary);
+  /* Burgundy text color (#8E2157) for secondary buttons, aligning with primary brand colors for emphasis. Resolves to #8E2157. */
+  --f-button-secondary-text: var(--f-brand-color-text-primary);
+  /* Medium grey text color (#9099A2) for disabled secondary buttons, indicating non-interactive state. Resolves to #9099A2. */
+  --f-button-secondary-text-disabled: var(--f-brand-color-text-disabled);
+  /* Burgundy text color (#8E2157) for secondary buttons in hover state, maintaining consistency with default text. Resolves to #8E2157. */
+  --f-button-secondary-text-hover: var(--f-brand-color-text-primary);
+  /* Font family for the button type group, aliasing brand/type/body-medium — applies the secondary typeface to button labels across all button variants. Resolves to Graphik,Graphik Web,Arial,sans-serif. */
+  --f-button-type-font-family: var(--f-brand-type-body-medium-font-family);
+  /* Font size for the button type group, aliasing brand/type/body-medium — sets the text size for button labels to match body-medium scale. Resolves to 16px. */
+  --f-button-type-font-size: var(--f-brand-type-body-medium-font-size);
+  /* Font weight for the button type group, aliasing brand/type/body-medium — applies medium weight to button labels for clarity and visual distinction from body text. Resolves to 500. */
+  --f-button-type-font-weight: var(--f-brand-type-body-medium-font-weight);
+  /* Line height for the button type group, aliasing brand/type/body-medium — ensures vertically balanced text within button containers across all variants. Resolves to 24px. */
+  --f-button-type-line-height: var(--f-brand-type-body-medium-line-height);
+  /* A pure white (#ffffff) background that creates a clean, high-contrast button surface. Resolves to #ffffff. */
+  --f-button-white-filled-background: var(--f-brand-color-background-light);
+  /* A deep burgundy (#5c0931) background that provides strong visual feedback on interaction. Resolves to #5c0931. */
+  --f-button-white-filled-background-hover: var(--f-brand-color-background-primary-hover);
+  /* A medium burgundy (#8E2157) border color that outlines the button with brand accent. Resolves to #8E2157. */
+  --f-button-white-filled-border: var(--f-brand-color-border-primary);
+  /* A medium gray (#9099A2) border color that indicates reduced interactivity. Resolves to #9099A2. */
+  --f-button-white-filled-border-disabled: var(--f-brand-color-border-disabled);
+  /* A deep burgundy (#5c0931) border color that darkens on interaction. Resolves to #5c0931. */
+  --f-button-white-filled-border-hover: var(--f-brand-color-border-primary-hover);
+  /* A medium burgundy (#8E2157) icon color that matches the primary text and border. Resolves to #8E2157. */
+  --f-button-white-filled-icon: var(--f-brand-color-icon-primary);
+  /* A medium burgundy (#8E2157) text color that serves as the primary brand accent. Resolves to #8E2157. */
+  --f-button-white-filled-text: var(--f-brand-color-text-primary);
+  /* A medium gray (#9099A2) text color that indicates non-interactive states. Resolves to #9099A2. */
+  --f-button-white-filled-text-disabled: var(--f-brand-color-text-disabled);
+  /* A pure white (#ffffff) text color that maintains readability against dark backgrounds. Resolves to #ffffff. */
+  --f-button-white-filled-text-hover: var(--f-brand-color-text-light);
+  /* Transparent background (#1F212B00) for a white-outlined button, creating a see-through effect that reveals underlying surfaces. Resolves to #1F212B00. */
+  --f-button-white-outlined-background: var(--f-brand-color-background-transparent);
+  /* Pure white background (#ffffff) for hover state, providing a solid light overlay on interaction. Resolves to #ffffff. */
+  --f-button-white-outlined-background-hover: var(--f-brand-color-background-light);
+  /* White border color (#ffffff) for default state, creating a crisp outline against darker backgrounds. Resolves to #ffffff. */
+  --f-button-white-outlined-border: var(--f-brand-color-border-light);
+  /* Medium grey border color (#9099A2) for disabled state, reducing visual prominence to indicate inactivity. Resolves to #9099A2. */
+  --f-button-white-outlined-border-disabled: var(--f-brand-color-border-disabled);
+  /* Burgundy primary border color (#8E2157) for hover state, emphasizing interaction with brand color. Resolves to #8E2157. */
+  --f-button-white-outlined-border-hover: var(--f-brand-color-border-primary);
+  /* White icon color (#ffffff) for default state, matching text for visual consistency. Resolves to #ffffff. */
+  --f-button-white-outlined-icon: var(--f-brand-color-icon-light);
+  /* White text color (#ffffff) for default state, ensuring high contrast against dark backgrounds. Resolves to #ffffff. */
+  --f-button-white-outlined-text: var(--f-brand-color-text-light);
+  /* Medium grey text color (#9099A2) for disabled state, indicating non-interactive status with reduced contrast. Resolves to #9099A2. */
+  --f-button-white-outlined-text-disabled: var(--f-brand-color-text-disabled);
+  /* Burgundy primary text color (#8E2157) for hover state, shifting to brand accent for emphasis. Resolves to #8E2157. */
+  --f-button-white-outlined-text-hover: var(--f-brand-color-text-primary);
+  --f-button-base: var(--f-button-base-font-weight) var(--f-button-base-font-size)/ var(--f-button-base-font-family);
+  --f-button-type: var(--f-button-type-font-weight) var(--f-button-type-font-size)/var(--f-button-type-line-height) var(--f-button-type-font-family);
+  /* Deprecated: Use --f-button-primary-background instead. Kept for backward compatibility. */
+  --f-button-primary-background-color: var(--f-brand-color-background-primary);
+  /* Deprecated: Use --f-button-primary-background-hover instead. Kept for backward compatibility. */
+  --f-button-primary-background-color-hover: var(--f-brand-color-primary-hover);
+}
+
+/* ============================================
+ * RESPONSIVE TYPOGRAPHY TOKENS - 1200px
+ * ============================================
+ * Typography tokens that adapt at breakpoints up to 1200px width.
+ * These tokens override font-size and line-height for smaller screens.
+ * ============================================ */
+
+@media all and (max-width: 1200px) {
+  :root {
+    --f-brand-type-title-1: var(--f-brand-type-title-1-font-weight) var(--f-base-type-scale-6)/var(--f-base-type-line-height-6) var(--f-brand-type-title-1-font-family);
+    --f-brand-type-title-2: var(--f-brand-type-title-2-font-weight) var(--f-base-type-scale-5)/var(--f-base-type-line-height-5) var(--f-brand-type-title-2-font-family);
+    --f-brand-type-title-3: var(--f-brand-type-title-3-font-weight) var(--f-base-type-scale-5)/var(--f-base-type-line-height-5) var(--f-brand-type-title-3-font-family);
+    --f-brand-type-page-title: var(--f-brand-type-page-title-font-weight) var(--f-base-type-scale-7)/var(--f-base-type-line-height-7) var(--f-brand-type-page-title-font-family);
+    --f-brand-type-numerals: var(--f-brand-type-numerals-font-weight) var(--f-base-type-scale-5)/var(--f-base-type-line-height-5) var(--f-brand-type-numerals-font-family);
+  }
+}
+
+/* ============================================
+ * RESPONSIVE TYPOGRAPHY TOKENS - 768px
+ * ============================================
+ * Typography tokens that adapt at breakpoints up to 768px width.
+ * These tokens override font-size and line-height for smaller screens.
+ * ============================================ */
+
+@media all and (max-width: 768px) {
+  :root {
+    --f-brand-type-page-title: var(--f-brand-type-page-title-font-weight) var(--f-base-type-scale-6)/var(--f-base-type-line-height-6) var(--f-brand-type-page-title-font-family);
+  }
+}
+
+:lang(ar), :lang(fa) {
+  --f-base-type-family-primary: "Almarai", "Noto Arabic", "Arial", sans-serif;
+  --f-base-type-family-secondary: "Almarai", "Noto Arabic", "Arial", sans-serif;
+}
+
+:lang(bg), :lang(cs), :lang(ro), :lang(sr) {
+  --f-base-type-family-primary: "Noto Sans", "Jotia", sans-serif;
+  --f-base-type-family-secondary: "Graphik Web", "Verdana", sans-serif;
+}
+
+:lang(tr) {
+  --f-base-type-family-primary: "Noto Sans Turk", "Verdana", sans-serif;
+  --f-base-type-family-secondary: "Graphik Web", "Verdana", sans-serif;
+}
+
+:lang(vi) {
+  --f-base-type-family-primary: "Noto Sans Viet", "Verdana", sans-serif;
+  --f-base-type-family-secondary: "Graphik Web", "Verdana", sans-serif;
+}
+
+/* ============================================
+ * DEPRECATED TOKENS
+ * ============================================
+ * These tokens are deprecated and will be phased out.
+ * Please replace them with the new tokens they reference.
+ * ============================================ */
+
+:root {
+  /* Deprecated: Use base.radius.none instead */
+  --f-base-border-radius-none: var(--f-base-radius-none);
+
+  /* Deprecated: Use base.radius.sm instead */
+  --f-base-border-radius-tiny: var(--f-base-radius-sm);
+
+  /* Deprecated: Use base.radius.md instead */
+  --f-base-border-radius-small: var(--f-base-radius-md);
+
+  /* Deprecated: Use base.radius.lg instead */
+  --f-base-border-radius-medium: var(--f-base-radius-lg);
+
+  /* Deprecated: Use base.radius.xl instead */
+  --f-base-border-radius-large: var(--f-base-radius-xl);
+
+  /* Deprecated: Use base.radius.full instead */
+  --f-base-border-radius-circular: var(--f-base-radius-full);
+
+  /* Deprecated: Use base.color.solid.burgundy.400 instead. Kept for backward compatibility. */
+  --f-base-color-solid-burgundy-50: var(--f-base-color-solid-burgundy-400);
+
+  /* Deprecated: Use base.color.solid.burgundy.900 instead. Kept for backward compatibility. */
+  --f-base-color-solid-burgundy-100: var(--f-base-color-solid-burgundy-900);
+
+  /* Deprecated: Use base.color.solid.white-100.100 instead */
+  --f-base-color-solid-white: var(--f-base-color-solid-white-100);
+
+  /* Deprecated: This token is deprecated. Use base.opacity.70 (0.7) for opacity values. Kept for backward compatibility. */
+  --f-base-color-solid-transparency: 75%;
+
+  /* Deprecated: Use base.color.solid.grey.100-new instead. Kept for backward compatibility. Note: The old grey-100 (#1F212B) maps to grey.900, not grey.100-new. */
+  --f-base-color-solid-grey-10: var(--f-base-color-solid-grey-100-new);
+
+  /* Deprecated: Use base.color.solid.grey.200 instead. Kept for backward compatibility. */
+  --f-base-color-solid-grey-25: var(--f-base-color-solid-grey-200);
+
+  /* Deprecated: Use base.color.solid.grey.300 instead. Kept for backward compatibility. */
+  --f-base-color-solid-grey-30: var(--f-base-color-solid-grey-300);
+
+  /* Deprecated: Use base.color.solid.grey.400 instead. Kept for backward compatibility. */
+  --f-base-color-solid-grey-50: var(--f-base-color-solid-grey-400);
+
+  /* Deprecated: Use base.color.solid.grey.600 instead. Kept for backward compatibility. */
+  --f-base-color-solid-grey-75: var(--f-base-color-solid-grey-600);
+
+  /* DEPRECATED: This token previously had value #1F212B (darkest grey) and was used for text-default, icon-default, borders. The new correct grey.100 is #F2F3FA (lightest grey for backgrounds). This deprecated entry maintains backward compatibility with production code. Migrate to: use base.color.solid.grey.900 for the old text/icon/border color, or base.color.solid.grey-100-new (see below) for the new light background color. */
+  --f-base-color-solid-grey-100: var(--f-base-color-solid-grey-900);
+
+  /* Deprecated: Use base.color.solid.grey.900-70A instead. Kept for backward compatibility. */
+  --f-base-color-solid-grey-100a: var(--f-base-color-solid-grey-900-70a);
+
+  /* Deprecated: Use base.color.solid.green.200 instead. Kept for backward compatibility. */
+  --f-base-color-solid-green-50: var(--f-base-color-solid-green-200);
+
+  /* Deprecated: Use base.color.solid.yellow.100 instead. Kept for backward compatibility. */
+  --f-base-color-solid-yellow-50: var(--f-base-color-solid-yellow-100);
+
+  /* Deprecated: Use base.color.solid.red.100 instead. Kept for backward compatibility. */
+  --f-base-color-solid-red-50: var(--f-base-color-solid-red-100);
+
+  /* Deprecated: Use base.color.solid.violet.100 instead. Kept for backward compatibility. */
+  --f-base-color-solid-violet-25: var(--f-base-color-solid-violet-100);
+
+  /* Deprecated: Use base.color.solid.violet.200 instead. Kept for backward compatibility. */
+  --f-base-color-solid-violet-50: var(--f-base-color-solid-violet-200);
+
+  /* Deprecated: Use base.color.solid.loyalty.gold.100 instead. Kept for backward compatibility. */
+  --f-base-color-solid-gold-50: var(--f-base-color-solid-loyalty-gold-100);
+
+  /* Deprecated: Use base.color.solid.loyalty.gold.400 instead. Kept for backward compatibility. */
+  --f-base-color-solid-gold-75: var(--f-base-color-solid-loyalty-gold-400);
+
+  /* Deprecated: Use base.color.solid.loyalty.gold.900 instead. Kept for backward compatibility. */
+  --f-base-color-solid-gold-100: var(--f-base-color-solid-loyalty-gold-900);
+
+  /* Deprecated: Use base.color.solid.loyalty.silver.400 instead. Kept for backward compatibility. */
+  --f-base-color-solid-silver-50: var(--f-base-color-solid-loyalty-silver-400);
+
+  /* Deprecated: Use base.color.solid.grey.600 instead. Kept for backward compatibility. */
+  --f-base-color-solid-silver-100: var(--f-base-color-solid-grey-600);
+
+  /* Deprecated: Use base.color.solid.loyalty.platinum.100 instead. Kept for backward compatibility. */
+  --f-base-color-solid-platinum-50: var(--f-base-color-solid-loyalty-platinum-100);
+
+  /* Deprecated: Use base.color.solid.loyalty.platinum.900 instead. Kept for backward compatibility. */
+  --f-base-color-solid-platinum-100: var(--f-base-color-solid-loyalty-platinum-900);
+
+  /* Deprecated: Use base.color.gradient.loyalty.burgundy instead */
+  --f-base-color-gradient-burgundy: var(--f-base-color-gradient-loyalty-burgundy);
+
+  /* Deprecated: Use base.color.gradient.loyalty.silver instead */
+  --f-base-color-gradient-silver: var(--f-base-color-gradient-loyalty-silver);
+
+  /* Deprecated: Use base.color.gradient.loyalty.gold instead */
+  --f-base-color-gradient-gold: var(--f-base-color-gradient-loyalty-gold);
+
+  /* Deprecated: Use base.color.gradient.loyalty.platinum instead */
+  --f-base-color-gradient-platinum: var(--f-base-color-gradient-loyalty-platinum);
+
+  /* Deprecated: Use base.size.12 instead */
+  --f-base-size-7: var(--f-base-size-12);
+
+  /* Deprecated: Use base.size.16 instead */
+  --f-base-size-9: var(--f-base-size-16);
+
+  /* Deprecated: Use brand.radius.none instead */
+  --f-brand-border-radius-none: var(--f-brand-radius-none);
+
+  /* Deprecated: Use brand.radius.base instead */
+  --f-brand-border-radius-base: var(--f-brand-radius-base);
+
+  /* Deprecated: Use brand.radius.small instead */
+  --f-brand-border-radius-small: var(--f-brand-radius-small);
+
+  /* Deprecated: Use brand.radius.inner instead */
+  --f-brand-border-radius-inner: var(--f-brand-radius-inner);
+
+  /* Deprecated: Use brand.radius.outer instead */
+  --f-brand-border-radius-outer: var(--f-brand-radius-outer);
+
+  /* Deprecated: Use brand.radius.rounded instead */
+  --f-brand-border-radius-rounded: var(--f-brand-radius-rounded);
+
+  /* Typography token for font-family */
+  --f-brand-type-link-font-family: var(--f-base-type-family-secondary);
+
+  /* Typography token for font-weight */
+  --f-brand-type-link-font-weight: var(--f-base-type-weight-medium);
+
+  /* Typography token for font-size */
+  --f-brand-type-link-font-size: var(--f-base-type-scale-3);
+
+  /* Typography token for line-height */
+  --f-brand-type-link-line-height: var(--f-base-type-line-height-3);
+
+  /* Deprecated: Use base.size.3 (12px) instead */
+  --f-brand-icon-size-inline: var(--f-base-size-3);
+
+  /* Deprecated: Use base.size.6 (24px) instead */
+  --f-brand-icon-size-nav: var(--f-base-size-6);
+
+  /* Deprecated: Use base.size.12 (48px) instead */
+  --f-brand-icon-size-badges: var(--f-base-size-12);
+
+  /* Deprecated: Use button.base.border-radius instead */
+  --f-button-border-radius: var(--f-button-base-border-radius);
+
+  /* Deprecated: Use button.primary.background instead. Kept for backward compatibility. */
+  --f-button-primary-background-color: var(--f-brand-color-background-primary);
+
+  /* Deprecated: Use button.primary.background-hover instead. Kept for backward compatibility. */
+  --f-button-primary-background-color-hover: var(--f-brand-color-primary-hover);
+
+  /* Deprecated: Use button.primary.text instead */
+  --f-button-primary-text-color: var(--f-button-primary-text);
+
+  /* Deprecated: Use button.primary.background instead. This directly references the burgundy color for fallback compatibility. */
+  --f-button-primary: var(--f-brand-color-primary);
+
+  /* Deprecated: Use button.secondary.text instead */
+  --f-button-secondary-text-color: var(--f-button-secondary-text);
+
+  /* Typography token for font-family */
+  --f-brand-type-link: var(--f-brand-type-link-font-weight) var(--f-brand-type-link-font-size)/var(--f-brand-type-link-line-height) var(--f-brand-type-link-font-family);
+
+}

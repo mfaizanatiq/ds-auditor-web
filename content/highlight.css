@@ -1,0 +1,17 @@
+.ds-auditor-highlight {
+  outline: 2px solid #0d99ff !important;
+  outline-offset: 2px !important;
+  transition: outline 0.12s ease;
+}
+
+#ds-auditor-overlay {
+  position: fixed;
+  z-index: 2147483646;
+  pointer-events: none;
+  border: 2px solid #0d99ff;
+  border-radius: 4px;
+  box-shadow: 0 0 0 3px rgba(13, 153, 255, 0.35), 0 8px 24px rgba(13, 153, 255, 0.2);
+  background: rgba(13, 153, 255, 0.06);
+  display: none;
+  transition: top 0.08s ease, left 0.08s ease, width 0.08s ease, height 0.08s ease;
+}
