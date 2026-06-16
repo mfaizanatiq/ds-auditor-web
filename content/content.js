@@ -5,8 +5,9 @@
 (function () {
   'use strict';
 
-  if (window.__dsAuditorContentInit) return;
-  window.__dsAuditorContentInit = true;
+  var CONTENT_SCRIPT_VERSION = 2;
+  if (window.__dsAuditorContentVersion === CONTENT_SCRIPT_VERSION) return;
+  window.__dsAuditorContentVersion = CONTENT_SCRIPT_VERSION;
 
   var STYLE_ID = 'ds-auditor-fixes';
   var OVERLAY_ID = 'ds-auditor-overlay';
@@ -60,7 +61,8 @@
 
   function findElement(elementRef, selector) {
     if (elementRef) {
-      var byRef = document.querySelector('[data-ds-auditor-ref="' + elementRef + '"]');
+      var byRef = document.querySelector('[data-ds-auditor-ref="' + elementRef + '"]') ||
+        document.querySelector('[data-ds-a11y-ref="' + elementRef + '"]');
       if (byRef) return byRef;
     }
     if (selector) {
@@ -353,7 +355,11 @@
   chrome.runtime.onMessage.addListener(function (msg, _sender, sendResponse) {
     try {
       if (msg.type === 'PING') {
-        sendResponse({ ok: true });
+        sendResponse({
+          ok: true,
+          version: CONTENT_SCRIPT_VERSION,
+          a11y: !!(window.DSAuditorA11y && window.DSAuditorA11y.runA11yAudit),
+        });
         return;
       }
 
@@ -363,12 +369,43 @@
       }
 
       if (msg.type === 'RUN_AUDIT') {
-        var result = window.DSAuditor.runAudit(msg.tokens || [], {
-          url: msg.pageUrl || location.href,
-          title: document.title,
-        });
-        sendResponse(result);
-        return;
+        setTimeout(function () {
+          try {
+            if (!window.DSAuditor || !window.DSAuditor.runAudit) {
+              sendResponse({ error: 'Design token auditor not loaded. Refresh the page and try again.' });
+              return;
+            }
+            var result = window.DSAuditor.runAudit(msg.tokens || [], {
+              url: msg.pageUrl || location.href,
+              title: document.title,
+            });
+            sendResponse(Object.assign({ auditMode: 'tokens' }, result));
+          } catch (err) {
+            sendResponse({ error: err && err.message ? err.message : String(err) });
+          }
+        }, 0);
+        return true;
+      }
+
+      if (msg.type === 'RUN_A11Y_AUDIT') {
+        setTimeout(function () {
+          try {
+            if (!window.DSAuditorA11y || !window.DSAuditorA11y.runA11yAudit) {
+              sendResponse({
+                error: 'Accessibility auditor not loaded. Refresh the page and try again.',
+              });
+              return;
+            }
+            var a11yResult = window.DSAuditorA11y.runA11yAudit({
+              url: msg.pageUrl || location.href,
+              title: document.title,
+            });
+            sendResponse(a11yResult);
+          } catch (err) {
+            sendResponse({ error: err && err.message ? err.message : String(err) });
+          }
+        }, 0);
+        return true;
       }
 
       if (msg.type === 'HIGHLIGHT') {

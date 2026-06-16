@@ -112,6 +112,31 @@ html.embedded .header {
 .score-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-top: 4px; }
 .score-meta { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
 
+.audit-mode-bar {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 8px;
+  flex-shrink: 0;
+}
+.audit-mode-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-1);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.audit-mode-btn:hover { color: var(--text-main); border-color: rgba(255,255,255,0.12); }
+.audit-mode-btn.active {
+  background: rgba(13, 153, 255, 0.15);
+  border-color: rgba(13, 153, 255, 0.45);
+  color: #7cc4ff;
+}
+
 .actions { padding: 10px 16px 8px; flex-shrink: 0; }
 
 .toggle-switch {
@@ -464,6 +489,45 @@ html.embedded .header {
 .issue-type-spacing .issue-type-label { color: #2dd4bf; }
 .issue-type-size .issue-type-label { color: #94a3b8; }
 .issue-type-effect .issue-type-label { color: #c084fc; }
+.issue-type-a11y .issue-type-label { color: #f472b6; }
+.issue-type-a11y::before { background: #f472b6; }
+.issue-severity-error .issue-card-header-bar { border-left: 3px solid var(--error); }
+.issue-severity-warn .issue-card-header-bar { border-left: 3px solid var(--warning); }
+.wcag-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(244, 114, 182, 0.18);
+  color: #f9a8d4;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.wcag-level {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+.guidance-box {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-main);
+  background: rgba(13, 153, 255, 0.08);
+  border: 1px solid rgba(13, 153, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+}
+.guidance-box strong {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #7cc4ff;
+  margin-bottom: 4px;
+}
 
 .issue-card-body { padding: 12px 14px 14px; }
 .issue-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }

@@ -16,7 +16,7 @@
         <input type="checkbox" id="applyAllToggle" aria-label="Preview all fixes" />
         <span class="toggle-slider"></span>
       </label>
-      <button class="icon-btn" id="exportBtn" style="display:none" title="Export HTML report (Shift+click for JSON)" aria-label="Export HTML report">
+      <button class="icon-btn" id="exportBtn" style="display:none" title="Export report (Accessibility: Excel · Tokens: HTML · Shift+click: JSON)" aria-label="Export report">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
       <button class="icon-btn" id="settingsBtn" title="Token libraries" aria-label="Token libraries">
@@ -28,8 +28,13 @@
   <div class="screen active" id="mainScreen">
     <div class="score-card" id="scoreCard">
       <div class="score-value" id="scoreValue">—</div>
-      <div class="score-label">Compliance</div>
+      <div class="score-label" id="scoreLabel">Compliance</div>
       <div class="score-meta" id="scoreMeta">Token library loaded — audit this page</div>
+    </div>
+
+    <div class="audit-mode-bar" id="auditModeBar">
+      <button type="button" class="audit-mode-btn active" data-mode="tokens">Design tokens</button>
+      <button type="button" class="audit-mode-btn" data-mode="a11y">Accessibility</button>
     </div>
 
     <div class="actions">
@@ -38,8 +43,8 @@
 
     <div class="filter-bar" id="filterBar" style="display:none">
       <div class="view-switcher" id="viewSwitcher">
-        <button type="button" class="view-btn active" data-view="foundation">Foundation</button>
-        <button type="button" class="view-btn" data-view="component">Component</button>
+        <button type="button" class="view-btn active" data-view="foundation">Grouped</button>
+        <button type="button" class="view-btn" data-view="component">By element</button>
       </div>
       <div class="filter-segment-group" id="filterSegments"></div>
     </div>
@@ -78,6 +83,8 @@
   <script src="../lib/color-utils.js"></script>
   <script src="../lib/token-parser.js"></script>
   <script src="../lib/token-synthesizer.js"></script>
+  <script src="../lib/a11y-auditor.js"></script>
+  <script src="../lib/a11y-export.js"></script>
   <script src="../lib/html-report.js"></script>
   <script src="popup.js"></script>
 </body>

@@ -24,8 +24,18 @@
       done({ id: embeddedTabId, url: embeddedPageUrl });
       return;
     }
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      done(tabs[0] || null);
+    chrome.runtime.sendMessage({ type: 'GET_ACTIVE_TAB' }, function (res) {
+      if (chrome.runtime.lastError) {
+        done(null);
+        return;
+      }
+      if (res && res.tab) {
+        embeddedTabId = res.tab.id;
+        embeddedPageUrl = res.tab.url;
+        done(res.tab);
+        return;
+      }
+      done(null);
     });
   }
 
@@ -36,6 +46,7 @@
   var lastReport = null;
   var activeFilter = 'all';
   var auditViewMode = 'foundation';
+  var auditMode = 'tokens';
   var hoveredCard = null;
   var auditedTabId = null;
   var appliedFixKeys = Object.create(null);
@@ -162,6 +173,24 @@
     a.download = filename;
     a.click();
     URL.revokeObjectURL(a.href);
+  }
+
+  function exportA11yExcel() {
+    if (!lastReport || lastReport.auditMode !== 'a11y') return;
+    var Exp = window.DSAuditorA11yExport;
+    if (!Exp) {
+      showStatus('Export module not loaded', 'error');
+      return;
+    }
+    var issues = (lastReport.issues || []).filter(function (issue) {
+      return !isIssueIgnored(issue);
+    });
+    var xml = Exp.buildExcelXml({ report: lastReport, issues: issues });
+    var slug = getPageIgnoreKey((lastReport.page && lastReport.page.url) || 'report')
+      .replace(/[^\w.-]+/g, '-')
+      .slice(0, 60);
+    downloadBlob(xml, 'accessibility-audit-' + slug + '.xls', 'application/vnd.ms-excel');
+    showStatus('Excel report downloaded · ' + issues.length + ' issues with WCAG criteria', 'success');
   }
 
   function exportHtmlReport() {
@@ -345,6 +374,10 @@
   function updateApplyAllBar(report) {
     var wrap = $('applyAllWrap');
     if (!wrap) return;
+    if (report && report.auditMode === 'a11y') {
+      wrap.style.display = 'none';
+      return;
+    }
     var bulkCount = buildBulkFixes().length;
     var show = report && bulkCount > 0;
     wrap.style.display = show ? 'inline-block' : 'none';
@@ -560,7 +593,7 @@
 
   function setLoading(on) {
     loader.classList.toggle('visible', on);
-    runAuditBtn.disabled = on || !getActiveTokens().length;
+    runAuditBtn.disabled = on || (auditMode === 'tokens' && !getActiveTokens().length);
   }
 
   function getActiveTokens() {
@@ -611,8 +644,19 @@
   function updateAuditButton() {
     var hasTokens = getActiveTokens().length > 0;
     var count = getActiveTokens().length;
+    if (auditMode === 'a11y') {
+      runAuditBtn.disabled = false;
+      runAuditBtn.textContent = 'Run accessibility audit';
+      if (lastReport && lastReport.auditMode === 'a11y') {
+        refreshComplianceUI();
+      } else if (!lastReport) {
+        scoreMeta.textContent = 'WCAG 2.x · Level A & AA · single-pass scan';
+      }
+      return;
+    }
+    runAuditBtn.textContent = 'Audit this page';
     runAuditBtn.disabled = !hasTokens;
-    if (lastReport) {
+    if (lastReport && lastReport.auditMode === 'tokens') {
       refreshComplianceUI();
       return;
     }
@@ -777,9 +821,14 @@
   function persistAuditReport(report) {
     if (!report || !report.page || !report.page.url) return;
     var pageKey = getPageIgnoreKey(report.page.url);
+    var mode = report.auditMode || 'tokens';
     chrome.storage.local.get([AUDIT_CACHE_KEY], function (data) {
       var all = (data && data[AUDIT_CACHE_KEY]) || {};
-      all[pageKey] = {
+      if (!all[pageKey] || typeof all[pageKey] !== 'object' || all[pageKey].report) {
+        all[pageKey] = { modes: {} };
+      }
+      if (!all[pageKey].modes) all[pageKey].modes = {};
+      all[pageKey].modes[mode] = {
         report: report,
         auditedTabId: auditedTabId,
         activeFilter: activeFilter,
@@ -790,7 +839,9 @@
       var keys = Object.keys(all);
       if (keys.length > 30) {
         keys.sort(function (a, b) {
-          return String(all[b].savedAt || '').localeCompare(String(all[a].savedAt || ''));
+          var aT = (all[a].modes && all[a].modes.tokens && all[a].modes.tokens.savedAt) || '';
+          var bT = (all[b].modes && all[b].modes.tokens && all[b].modes.tokens.savedAt) || '';
+          return String(bT).localeCompare(String(aT));
         });
         keys.slice(30).forEach(function (k) { delete all[k]; });
       }
@@ -812,7 +863,11 @@
       }
       var pageKey = getPageIgnoreKey(tab.url);
       chrome.storage.local.get([AUDIT_CACHE_KEY], function (data) {
-        var cached = ((data && data[AUDIT_CACHE_KEY]) || {})[pageKey];
+        var pageCache = ((data && data[AUDIT_CACHE_KEY]) || {})[pageKey];
+        var cached = pageCache && pageCache.modes && pageCache.modes[auditMode];
+        if (!cached && pageCache && pageCache.report) {
+          cached = pageCache.report.auditMode === auditMode ? pageCache : null;
+        }
         if (!cached || !cached.report) {
           if (done) done(false);
           return;
@@ -834,14 +889,57 @@
   }
 
   function refreshReportUI() {
-    if (!lastReport) return;
+    if (!lastReport || lastReport.auditMode !== auditMode) {
+      showModeEmptyState();
+      return;
+    }
     exportBtn.style.display = 'flex';
     emptyState.style.display = 'none';
     refreshComplianceUI();
     renderFilters(lastReport);
     renderIssues(lastReport);
     updateApplyAllBar(lastReport);
-    syncApplyAllToggle();
+    if (auditMode === 'tokens') syncApplyAllToggle();
+    else {
+      var wrap = $('applyAllWrap');
+      if (wrap) wrap.style.display = 'none';
+    }
+  }
+
+  function showModeEmptyState() {
+    issueList.innerHTML = '';
+    filterBar.style.display = 'none';
+    exportBtn.style.display = 'none';
+    if (issueHint) issueHint.style.display = 'none';
+    emptyState.style.display = 'block';
+    if (auditMode === 'a11y') {
+      emptyState.innerHTML = '<p><strong>Accessibility mode</strong> — audits WCAG 2.x Level A &amp; AA criteria: contrast, images, structure, forms, keyboard, focus, and ARIA.</p>';
+      scoreValue.textContent = '—';
+      scoreMeta.textContent = 'Run accessibility audit to scan this page';
+    } else {
+      emptyState.innerHTML = '<p>Upload any design-system token file (CSS custom properties or JSON). The auditor scans your library, infers semantic layers, and suggests the right tokens automatically.</p>';
+      updateAuditButton();
+    }
+  }
+
+  function setAuditMode(mode) {
+    if (!mode || mode === auditMode) return;
+    auditMode = mode;
+    document.querySelectorAll('.audit-mode-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    var scoreLabelEl = $('scoreLabel');
+    if (scoreLabelEl) {
+      scoreLabelEl.textContent = mode === 'a11y' ? 'Accessibility score' : 'Compliance';
+    }
+    updateAuditButton();
+    if (lastReport && lastReport.auditMode === mode) {
+      refreshReportUI();
+    } else {
+      restorePersistedAudit(function (restored) {
+        if (!restored) showModeEmptyState();
+      });
+    }
   }
 
   function loadIgnoredRules(pageKey, done) {
@@ -904,6 +1002,11 @@
 
   function remainingIssues() {
     if (!lastReport || !lastReport.issues) return [];
+    if (lastReport.auditMode === 'a11y') {
+      return lastReport.issues.filter(function (issue) {
+        return !isIssueIgnored(issue);
+      });
+    }
     return lastReport.issues.filter(function (issue) {
       if (isIssueIgnored(issue)) return false;
       if (!issue.fixes || !issue.fixes.length) return true;
@@ -938,21 +1041,34 @@
   }
 
   function refreshComplianceUI() {
-    if (!lastReport) return;
+    if (!lastReport || lastReport.auditMode !== auditMode) return;
     var remaining = remainingIssues();
-    var score = computeComplianceScore(lastReport.scannedElements, remaining);
+    var score = lastReport.auditMode === 'a11y'
+      ? (window.DSAuditorA11y && window.DSAuditorA11y.computeA11yScore
+        ? window.DSAuditorA11y.computeA11yScore(remaining, lastReport.scannedElements)
+        : lastReport.complianceScore)
+      : computeComplianceScore(lastReport.scannedElements, remaining);
     var ignored = countIgnoredIssues();
-    var fixed = lastReport.issues.filter(function (issue) {
+    var fixed = lastReport.auditMode === 'a11y' ? 0 : lastReport.issues.filter(function (issue) {
       if (isIssueIgnored(issue)) return false;
       if (!issue.fixes || !issue.fixes.length) return false;
       return isIssueApplied(issue);
     }).length;
     scoreValue.textContent = score + '%';
     scoreValue.className = 'score-value ' + scoreClass(score);
-    scoreMeta.textContent =
-      remaining.length + ' open · ' + fixed + ' fixed' +
-      (ignored ? ' · ' + ignored + ' ignored' : '') +
-      ' · ' + lastReport.scannedElements + ' elements';
+    if (lastReport.auditMode === 'a11y') {
+      var errCount = remaining.filter(function (i) { return i.severity === 'error'; }).length;
+      var warnCount = remaining.filter(function (i) { return i.severity === 'warn'; }).length;
+      scoreMeta.textContent =
+        remaining.length + ' issues · ' + errCount + ' errors · ' + warnCount + ' warnings' +
+        (ignored ? ' · ' + ignored + ' ignored' : '') +
+        ' · ' + lastReport.scannedElements + ' elements scanned';
+    } else {
+      scoreMeta.textContent =
+        remaining.length + ' open · ' + fixed + ' fixed' +
+        (ignored ? ' · ' + ignored + ' ignored' : '') +
+        ' · ' + lastReport.scannedElements + ' elements';
+    }
   }
 
   function countByType(issues) {
@@ -976,7 +1092,20 @@
     { key: 'effect', label: 'Effects', accent: '#c084fc', test: function (i) { return i.type === 'effect'; } },
   ];
 
+  var A11Y_CATS = [
+    { key: 'contrast', label: 'Contrast', accent: '#fb7185', test: function (i) { return i.a11yCategory === 'contrast'; } },
+    { key: 'images', label: 'Images', accent: '#60a5fa', test: function (i) { return i.a11yCategory === 'images'; } },
+    { key: 'structure', label: 'Structure', accent: '#a78bfa', test: function (i) { return i.a11yCategory === 'structure'; } },
+    { key: 'forms', label: 'Forms', accent: '#34d399', test: function (i) { return i.a11yCategory === 'forms'; } },
+    { key: 'keyboard', label: 'Keyboard', accent: '#fbbf24', test: function (i) { return i.a11yCategory === 'keyboard'; } },
+    { key: 'focus', label: 'Focus', accent: '#2dd4bf', test: function (i) { return i.a11yCategory === 'focus'; } },
+    { key: 'aria', label: 'ARIA', accent: '#c084fc', test: function (i) { return i.a11yCategory === 'aria'; } },
+  ];
+
   function getIssueGroupKey(issue) {
+    if (issue.type === 'a11y') {
+      return 'a11y|' + issue.ruleId + '|' + String(issue.found || '').trim();
+    }
     var fix = issue.fixes && issue.fixes[0];
     var token = fix ? fix.tokenName : '';
     var found = String(issue.found || '').trim();
@@ -1016,13 +1145,19 @@
   function renderCardHeader(issue, group, isIgnored) {
     var count = group ? group.issues.length : 0;
     var ruleKey = group ? group.key : getIssueGroupKey(issue);
+    var typeLabel = issue.type === 'a11y' ? 'A11y' : issue.type;
+    var wcagHtml = issue.wcag && issue.wcag.length
+      ? '<span class="wcag-badge">WCAG ' + escapeHtml(issue.wcag.join(', ')) + '</span>' +
+        (issue.wcagLevel ? '<span class="wcag-level">' + escapeHtml(issue.wcagLevel) + '</span>' : '')
+      : '';
     return (
       '<div class="issue-card-header-bar">' +
         '<div class="issue-card-header-left">' +
-          '<span class="issue-type-label">' + issue.type +
+          '<span class="issue-type-label">' + typeLabel +
             (count > 1 ? '<span class="group-count">' + count + '</span>' : '') +
+            wcagHtml +
           '</span>' +
-          '<span class="issue-header-meta">' + escapeHtml(issue.propertyLabel) + '</span>' +
+          '<span class="issue-header-meta">' + escapeHtml(issue.propertyLabel || issue.wcagName || '') + '</span>' +
         '</div>' +
         '<div class="issue-card-header-actions">' +
           '<button type="button" class="ignore-btn icon-btn" data-rule-key="' + escapeHtml(ruleKey) + '" data-ignored="' + (isIgnored ? '1' : '0') + '" data-issue-count="' + (group ? group.issues.length : 1) + '" title="' + (isIgnored ? 'Restore this rule' : 'Ignore this rule') + '" aria-label="' + (isIgnored ? 'Restore this rule' : 'Ignore this rule') + '">' +
@@ -1053,7 +1188,18 @@
     return fix.tokenName;
   }
 
+  function renderGuidanceHtml(issue) {
+    if (!issue.guidance) return '';
+    return (
+      '<div class="guidance-box">' +
+        '<strong>How to fix</strong>' +
+        escapeHtml(issue.guidance) +
+      '</div>'
+    );
+  }
+
   function renderFixesHtml(issue, group) {
+    if (issue.type === 'a11y') return renderGuidanceHtml(issue);
     var isColor = issue.type === 'color';
     return (issue.fixes || []).map(function (f, idx) {
       var isApplied = group
@@ -1135,7 +1281,8 @@
 
   function createIssueCardElement(issue) {
     var card = document.createElement('div');
-    card.className = 'issue-card issue-type-' + issue.type;
+    card.className = 'issue-card issue-type-' + issue.type +
+      (issue.severity ? ' issue-severity-' + issue.severity : '');
     card.innerHTML =
       renderCardHeader(issue, null, false) +
       '<div class="issue-card-body">' +
@@ -1284,7 +1431,9 @@
     var groups = getIgnoredGroups();
     if (activeFilter !== 'all') {
       groups = groups.filter(function (g) {
-        return g.representative.type === activeFilter;
+        var rep = g.representative;
+        if (report && report.auditMode === 'a11y') return rep.a11yCategory === activeFilter;
+        return rep.type === activeFilter;
       });
     }
     if (!groups.length) return;
@@ -1383,22 +1532,52 @@
       return;
     }
     issueHint.style.display = 'block';
+    if (lastReport && lastReport.auditMode === 'a11y') {
+      issueHint.textContent = 'Hover a card to locate on page · WCAG criteria shown per issue';
+      return;
+    }
     issueHint.textContent = auditViewMode === 'foundation'
       ? 'Similar violations grouped · Ignore a rule to hide it for this page · Export HTML report when done'
       : 'Hover a card to locate on page · Apply fixes then export HTML report for dev handoff';
   }
 
+  function countByCategory(issues) {
+    var byCat = {};
+    issues.forEach(function (i) {
+      var k = i.a11yCategory || 'structure';
+      byCat[k] = (byCat[k] || 0) + 1;
+    });
+    return byCat;
+  }
+
   function renderFilters(report) {
     var open = remainingIssues();
-    var byType = countByType(open);
-    var types = [
-      { id: 'all', label: 'All', count: open.length },
-      { id: 'color', label: 'Color', count: byType.color || 0 },
-      { id: 'typography', label: 'Type', count: byType.typography || 0 },
-      { id: 'spacing', label: 'Padding', count: byType.spacing || 0 },
-      { id: 'size', label: 'Size', count: byType.size || 0 },
-      { id: 'effect', label: 'Shadow', count: byType.effect || 0 },
-    ];
+    var isA11y = report.auditMode === 'a11y';
+    var types;
+
+    if (isA11y) {
+      var byCat = countByCategory(open);
+      types = [
+        { id: 'all', label: 'All', count: open.length },
+        { id: 'contrast', label: 'Contrast', count: byCat.contrast || 0 },
+        { id: 'images', label: 'Images', count: byCat.images || 0 },
+        { id: 'structure', label: 'Structure', count: byCat.structure || 0 },
+        { id: 'forms', label: 'Forms', count: byCat.forms || 0 },
+        { id: 'keyboard', label: 'Keyboard', count: byCat.keyboard || 0 },
+        { id: 'focus', label: 'Focus', count: byCat.focus || 0 },
+        { id: 'aria', label: 'ARIA', count: byCat.aria || 0 },
+      ];
+    } else {
+      var byType = countByType(open);
+      types = [
+        { id: 'all', label: 'All', count: open.length },
+        { id: 'color', label: 'Color', count: byType.color || 0 },
+        { id: 'typography', label: 'Type', count: byType.typography || 0 },
+        { id: 'spacing', label: 'Padding', count: byType.spacing || 0 },
+        { id: 'size', label: 'Size', count: byType.size || 0 },
+        { id: 'effect', label: 'Shadow', count: byType.effect || 0 },
+      ];
+    }
 
     filterSegments.innerHTML = '';
     types.forEach(function (t) {
@@ -1420,11 +1599,12 @@
     updateIssueHint(open.length);
   }
 
-  function renderFoundationIssues(issues) {
+  function renderFoundationIssues(issues, report) {
     var groups = groupIssuesBySimilarity(issues);
     var anyRendered = false;
+    var cats = report && report.auditMode === 'a11y' ? A11Y_CATS : FOUNDATION_CATS;
 
-    FOUNDATION_CATS.forEach(function (cat) {
+    cats.forEach(function (cat) {
       var catGroups = groups.filter(function (g) {
         return cat.test(g.representative);
       });
@@ -1473,7 +1653,11 @@
   function renderIssues(report) {
     var issues = remainingIssues();
     if (activeFilter !== 'all') {
-      issues = issues.filter(function (i) { return i.type === activeFilter; });
+      if (report.auditMode === 'a11y') {
+        issues = issues.filter(function (i) { return i.a11yCategory === activeFilter; });
+      } else {
+        issues = issues.filter(function (i) { return i.type === activeFilter; });
+      }
     }
 
     issueList.innerHTML = '';
@@ -1491,21 +1675,25 @@
           ? '<p>No open issues in this category.</p>'
           : (ignoredCount > 0 || appliedCount > 0
             ? '<p>All open issues resolved, applied, or ignored.</p>'
-            : '<p>No token violations found on this page.</p>');
+            : (report.auditMode === 'a11y'
+              ? '<p>No accessibility violations found on this page.</p>'
+              : '<p>No token violations found on this page.</p>'));
       } else {
-        emptyState.innerHTML = '<p>No token violations found on this page.</p>';
+        emptyState.innerHTML = report.auditMode === 'a11y'
+          ? '<p>No accessibility violations found on this page.</p>'
+          : '<p>No token violations found on this page.</p>';
       }
       renderAppliedSection();
       renderIgnoredSection(report);
       refreshComplianceUI();
-      syncApplyAllToggle();
+      if (report.auditMode !== 'a11y') syncApplyAllToggle();
       return;
     }
 
     emptyState.style.display = 'none';
 
     var rendered = auditViewMode === 'foundation'
-      ? renderFoundationIssues(issues)
+      ? renderFoundationIssues(issues, report)
       : renderComponentIssues(issues);
 
     if (!rendered) {
@@ -1517,11 +1705,19 @@
     renderIgnoredSection(report);
 
     refreshComplianceUI();
-    syncApplyAllToggle();
+    if (report.auditMode !== 'a11y') syncApplyAllToggle();
   }
 
   function renderReport(report) {
     lastReport = report;
+    if (report && report.auditMode) auditMode = report.auditMode;
+    document.querySelectorAll('.audit-mode-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.mode === auditMode);
+    });
+    var scoreLabelEl = $('scoreLabel');
+    if (scoreLabelEl) {
+      scoreLabelEl.textContent = auditMode === 'a11y' ? 'Accessibility score' : 'Compliance';
+    }
     exportBtn.style.display = report ? 'flex' : 'none';
     persistAuditReport(report);
     refreshComplianceUI();
@@ -1529,10 +1725,64 @@
     renderFilters(report);
     renderIssues(report);
     updateApplyAllBar(report);
-    syncFromPageFixState();
+    if (auditMode === 'tokens') syncFromPageFixState();
+  }
+
+  function sendAuditRequest(payload, tab, onReport) {
+    var msg = {
+      type: 'RUN_AUDIT_ON_TAB',
+      auditMode: payload.auditMode,
+      tokens: payload.tokens || [],
+      tabId: payload.tabId || embeddedTabId || (tab && tab.id),
+      pageUrl: payload.pageUrl || embeddedPageUrl || (tab && tab.url),
+    };
+    chrome.runtime.sendMessage(msg, function (report) {
+      setLoading(false);
+      if (chrome.runtime.lastError) {
+        showStatus(chrome.runtime.lastError.message, 'error');
+        return;
+      }
+      if (!report || typeof report !== 'object') {
+        showStatus('Audit failed — refresh the page and try again', 'error');
+        return;
+      }
+      if (report.error) {
+        showStatus(report.error, 'error');
+        return;
+      }
+      if (report.tabId) auditedTabId = report.tabId;
+      onReport(report, tab);
+    });
   }
 
   function runAudit() {
+    if (auditMode === 'a11y') {
+      getActiveTabContext(function (tab) {
+        if (!tab || !tab.id) {
+          showStatus('Could not find the page tab — refresh and open the panel again', 'error');
+          return;
+        }
+        auditedTabId = tab.id;
+        setLoading(true);
+        showStatus('Scanning page for accessibility issues…');
+        sendAuditRequest({ auditMode: 'a11y', tokens: [] }, tab, function (report) {
+          report.auditMode = 'a11y';
+          var pageUrl = (report.page && report.page.url) || (tab && tab.url) || '';
+          var pageKey = getPageIgnoreKey(pageUrl);
+          loadIgnoredRules(pageKey, function () {
+            appliedFixLog = [];
+            rebuildAppliedKeysFromLog();
+            renderReport(report);
+            showStatus(
+              'Accessibility audit · ' + (report.issueCount || 0) + ' issues · Export Excel for WCAG report',
+              'success'
+            );
+          });
+        });
+      });
+      return;
+    }
+
     var tokens = getActiveTokens();
     if (!tokens.length) {
       showStatus('Add at least one token library', 'error');
@@ -1541,47 +1791,39 @@
 
     getActiveTabContext(function (tab) {
       auditedTabId = tab && tab.id;
-
       setLoading(true);
       showStatus('');
-
-      chrome.runtime.sendMessage(
-        { type: 'RUN_AUDIT_ON_TAB', tokens: tokens },
-        function (report) {
-          setLoading(false);
-          if (chrome.runtime.lastError) {
-            showStatus(chrome.runtime.lastError.message, 'error');
-            return;
-          }
-          if (report && report.error) {
-            showStatus(report.error, 'error');
-            return;
-          }
-          if (report && report.tabId) auditedTabId = report.tabId;
-          var pageUrl = (report && report.page && report.page.url) || (tab && tab.url) || '';
-          var pageKey = getPageIgnoreKey(pageUrl);
-          loadIgnoredRules(pageKey, function () {
-            loadAppliedFixLog(pageKey, function () {
-              rebuildAppliedKeysFromLog();
-              renderReport(report);
-              var kept = appliedFixLog.length;
-              if (kept > 0) {
-                showStatus(
-                  'Audit refreshed · ' + kept + ' applied fix' + (kept !== 1 ? 'es' : '') +
-                  ' kept · Export HTML report for dev handoff',
-                  'success'
-                );
-              } else {
-                showStatus('Hover cards to preview · Click Apply to inject the token fix', 'success');
-              }
-            });
+      sendAuditRequest({ auditMode: 'tokens', tokens: tokens }, tab, function (report) {
+        report.auditMode = 'tokens';
+        var pageUrl = (report.page && report.page.url) || (tab && tab.url) || '';
+        var pageKey = getPageIgnoreKey(pageUrl);
+        loadIgnoredRules(pageKey, function () {
+          loadAppliedFixLog(pageKey, function () {
+            rebuildAppliedKeysFromLog();
+            renderReport(report);
+            var kept = appliedFixLog.length;
+            if (kept > 0) {
+              showStatus(
+                'Audit refreshed · ' + kept + ' applied fix' + (kept !== 1 ? 'es' : '') +
+                ' kept · Export HTML report for dev handoff',
+                'success'
+              );
+            } else {
+              showStatus('Hover cards to preview · Click Apply to inject the token fix', 'success');
+            }
           });
-        }
-      );
+        });
+      });
     });
   }
 
   function exportReport(e) {
+    if (!lastReport) return;
+    if (lastReport.auditMode === 'a11y') {
+      if (e && e.shiftKey) exportJsonReport();
+      else exportA11yExcel();
+      return;
+    }
     if (e && e.shiftKey) exportJsonReport();
     else exportHtmlReport();
   }
@@ -1594,6 +1836,14 @@
   });
   runAuditBtn.addEventListener('click', runAudit);
   exportBtn.addEventListener('click', exportReport);
+  var auditModeBar = $('auditModeBar');
+  if (auditModeBar) {
+    auditModeBar.querySelectorAll('.audit-mode-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        setAuditMode(btn.dataset.mode);
+      });
+    });
+  }
   var applyAllToggle = $('applyAllToggle');
   if (applyAllToggle) applyAllToggle.addEventListener('change', onApplyAllToggleChange);
 
@@ -1628,6 +1878,7 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'e' && (e.metaKey || e.ctrlKey) && lastReport) {
       if (e.shiftKey) exportJsonReport();
+      else if (lastReport.auditMode === 'a11y') exportA11yExcel();
       else exportHtmlReport();
     }
   });

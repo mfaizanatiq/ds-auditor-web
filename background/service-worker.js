@@ -11,6 +11,7 @@ const LIB_FILES = [
   'lib/pattern-matcher.js',
   'lib/token-engine.js',
   'lib/auditor.js',
+  'lib/a11y-auditor.js',
 ];
 
 const CONTENT_SCRIPT_FILES = [...LIB_FILES, 'content/panel-shell.js', 'content/content.js'];
@@ -44,22 +45,38 @@ async function injectPageScripts(tabId) {
   }
 }
 
-async function ensurePageScripts(tabId) {
+const CONTENT_SCRIPT_VERSION = 2;
+
+async function ensurePageScripts(tabId, options) {
+  const needA11y = !!(options && options.needA11y);
   const ping = await sendMessageOnce(tabId, { type: 'PING' });
-  if (ping && ping.ok) return;
+  const versionOk = ping && ping.ok && (ping.version || 0) >= CONTENT_SCRIPT_VERSION;
+  const a11yOk = !needA11y || (ping && ping.a11y);
+  if (versionOk && a11yOk) return;
   await injectPageScripts(tabId);
 }
 
 async function sendToTab(tabId, payload) {
   if (!tabId) return { ok: false, error: 'No tab' };
 
+  const needA11y = payload && payload.type === 'RUN_A11Y_AUDIT';
+
   let result = await sendMessageOnce(tabId, payload);
   if (result !== undefined) return result;
 
   try {
-    await ensurePageScripts(tabId);
+    await ensurePageScripts(tabId, { needA11y });
     result = await sendMessageOnce(tabId, payload);
     if (result !== undefined) return result;
+
+    if (needA11y) {
+      const ping = await sendMessageOnce(tabId, { type: 'PING' });
+      if (!ping || !ping.a11y) {
+        return {
+          error: 'Accessibility auditor not loaded. Refresh the page and run the audit again.',
+        };
+      }
+    }
     return { ok: false, error: 'No response from page' };
   } catch (e) {
     return { ok: false, error: e.message };
@@ -110,7 +127,11 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
   try {
     await ensurePageScripts(tab.id);
-    await sendToTab(tab.id, { type: 'TOGGLE_PANEL' });
+    await sendToTab(tab.id, {
+      type: 'TOGGLE_PANEL',
+      tabId: tab.id,
+      pageUrl: tab.url,
+    });
   } catch (e) {
     console.error('Failed to toggle DS Auditor panel', e);
   }
@@ -136,31 +157,59 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     return true;
   }
 
+  if (msg.type === 'GET_ACTIVE_TAB') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      safeSendResponse(sendResponse, { tab: tabs[0] || null });
+    });
+    return true;
+  }
+
   if (msg.type === 'RUN_AUDIT_ON_TAB') {
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      const tab = tabs[0];
-      if (!tab?.id) {
+    const runOnTab = async () => {
+      let tabId = msg.tabId;
+      let pageUrl = msg.pageUrl;
+
+      if (!tabId) {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        tabId = tabs[0]?.id;
+        pageUrl = pageUrl || tabs[0]?.url;
+      } else if (!pageUrl) {
+        try {
+          const tab = await chrome.tabs.get(tabId);
+          pageUrl = tab?.url;
+        } catch {
+          // tab may have closed
+        }
+      }
+
+      if (!tabId) {
         safeSendResponse(sendResponse, { error: 'No active tab' });
         return;
       }
-      if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')) {
+      if (!pageUrl || pageUrl.startsWith('chrome://') || pageUrl.startsWith('chrome-extension://')) {
         safeSendResponse(sendResponse, { error: 'Cannot audit this page. Open a regular website tab.' });
         return;
       }
 
-      const payload = { type: 'RUN_AUDIT', tokens: msg.tokens, pageUrl: tab.url };
+      const auditType = msg.auditMode === 'a11y' ? 'RUN_A11Y_AUDIT' : 'RUN_AUDIT';
+      const payload = {
+        type: auditType,
+        tokens: msg.tokens,
+        pageUrl: pageUrl,
+      };
 
       try {
-        const result = await sendToTab(tab.id, payload);
+        const result = await sendToTab(tabId, payload);
         if (result && typeof result === 'object' && !result.error) {
-          safeSendResponse(sendResponse, { ...result, tabId: tab.id });
+          safeSendResponse(sendResponse, { ...result, tabId, auditMode: msg.auditMode || 'tokens' });
         } else {
-          safeSendResponse(sendResponse, result || { error: 'Audit failed' });
+          safeSendResponse(sendResponse, result || { error: 'Audit failed — refresh the page and try again' });
         }
       } catch (e) {
         safeSendResponse(sendResponse, { error: e.message || 'Failed to run audit on this tab' });
       }
-    });
+    };
+    runOnTab();
     return true;
   }
 

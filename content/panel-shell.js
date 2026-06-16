@@ -126,7 +126,10 @@
   function setVisible(next) {
     visible = !!next;
     panelEl.classList.toggle('is-hidden', !visible);
-    if (visible) applyPosition(panelLeft, panelTop);
+    if (visible) {
+      applyPosition(panelLeft, panelTop);
+      notifyIframeContext();
+    }
   }
 
   function onPointerMove(e) {
@@ -301,11 +304,13 @@
       setPanelContext(sender.tab.id, sender.tab.url);
     }
     if (msg.type === 'TOGGLE_PANEL') {
+      if (msg.tabId) setPanelContext(msg.tabId, msg.pageUrl);
       togglePanel();
       sendResponse({ ok: true, visible: visible });
       return;
     }
     if (msg.type === 'SHOW_PANEL') {
+      if (msg.tabId) setPanelContext(msg.tabId, msg.pageUrl);
       showPanel();
       sendResponse({ ok: true, visible: visible });
       return;
