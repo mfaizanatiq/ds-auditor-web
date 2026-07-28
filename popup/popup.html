@@ -26,6 +26,11 @@
   </header>
 
   <div class="screen active" id="mainScreen">
+    <div class="audit-mode-bar" id="auditModeBar" role="tablist" aria-label="Audit mode">
+      <button type="button" class="audit-mode-btn active" data-mode="tokens" role="tab" aria-selected="true">Design tokens</button>
+      <button type="button" class="audit-mode-btn" data-mode="a11y" role="tab" aria-selected="false">Accessibility</button>
+    </div>
+
     <div class="score-card" id="scoreCard">
       <div class="score-value" id="scoreValue">-</div>
       <div class="score-card-text">
@@ -34,21 +39,17 @@
       </div>
     </div>
 
-    <div class="audit-mode-bar" id="auditModeBar">
-      <button type="button" class="audit-mode-btn active" data-mode="tokens">Design tokens</button>
-      <button type="button" class="audit-mode-btn" data-mode="a11y">Accessibility</button>
-    </div>
-
-    <div class="actions">
+    <div class="actions" id="runActions">
       <button class="btn" id="runAuditBtn" disabled>Audit this page</button>
     </div>
 
     <div class="filter-bar" id="filterBar" style="display:none">
+      <div class="filter-bar-label">Categories</div>
+      <div class="filter-chip-row" id="filterSegments"></div>
       <div class="view-switcher" id="viewSwitcher">
         <button type="button" class="view-btn active" data-view="foundation">Grouped</button>
         <button type="button" class="view-btn" data-view="component">By element</button>
       </div>
-      <div class="filter-chip-row" id="filterSegments"></div>
     </div>
     <p class="issue-hint" id="issueHint" style="display:none">Hover a card to locate on page · Click Apply to inject the token fix</p>
 

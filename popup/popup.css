@@ -144,22 +144,19 @@ body.has-report .score-card-text {
   flex: 1;
 }
 body.has-report .audit-mode-bar {
-  padding: 6px 16px 4px;
-  gap: 4px;
+  padding: 8px 12px 0;
 }
 body.has-report .audit-mode-btn {
-  padding: 6px 8px;
-  font-size: 10px;
+  padding: 7px 8px;
+  font-size: 11px;
 }
-body.has-report .actions {
-  padding: 4px 16px 6px;
-}
-body.has-report .actions .btn {
-  padding: 8px 14px;
-  font-size: 12px;
+body.has-report .actions,
+body.has-report #runActions {
+  display: none !important;
 }
 body.has-report .filter-bar {
-  padding: 0 16px 4px;
+  padding: 8px 12px 6px;
+  border-bottom: 1px solid var(--border);
 }
 body.has-report .issue-hint {
   display: none !important;
@@ -179,27 +176,31 @@ body.has-report .header {
 
 .audit-mode-bar {
   display: flex;
-  gap: 6px;
-  padding: 0 16px 8px;
+  gap: 0;
+  margin: 10px 16px 0;
+  padding: 3px;
   flex-shrink: 0;
+  background: var(--surface-1);
+  border-radius: 10px;
+  border: 1px solid var(--border);
 }
 .audit-mode-btn {
   flex: 1;
   padding: 8px 10px;
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 8px;
-  background: var(--surface-1);
+  background: transparent;
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
-.audit-mode-btn:hover { color: var(--text-main); border-color: rgba(255,255,255,0.12); }
+.audit-mode-btn:hover { color: var(--text-main); }
 .audit-mode-btn.active {
-  background: rgba(13, 153, 255, 0.15);
-  border-color: rgba(13, 153, 255, 0.45);
-  color: #7cc4ff;
+  background: #555555;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .actions { padding: 10px 16px 8px; flex-shrink: 0; }
@@ -257,6 +258,14 @@ body.has-report .header {
 .btn-secondary:hover { border-color: #fff; background: rgba(255,255,255,0.06); }
 
 .filter-bar { padding: 0 16px 8px; flex-shrink: 0; }
+.filter-bar-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
 
 .view-switcher {
   display: flex;
@@ -264,7 +273,7 @@ body.has-report .header {
   padding: 3px;
   background: var(--surface-1);
   border-radius: 8px;
-  margin-bottom: 8px;
+  margin-top: 8px;
 }
 .view-btn {
   flex: 1;

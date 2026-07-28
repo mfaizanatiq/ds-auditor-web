@@ -1094,6 +1094,8 @@
 
   function setReportLayout(hasReport) {
     document.body.classList.toggle('has-report', !!hasReport);
+    var runActions = $('runActions');
+    if (runActions) runActions.style.display = hasReport ? 'none' : '';
   }
 
   function showModeEmptyState() {
@@ -1125,7 +1127,9 @@
     auditMode = mode;
     activeFilter = 'all';
     document.querySelectorAll('.audit-mode-btn').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.mode === mode);
+      var on = btn.dataset.mode === mode;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     var scoreLabelEl = $('scoreLabel');
     if (scoreLabelEl) {
@@ -1920,7 +1924,9 @@
     if (!isValidFilterForMode(auditMode, activeFilter)) activeFilter = 'all';
     setReportLayout(!!report);
     document.querySelectorAll('.audit-mode-btn').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.mode === auditMode);
+      var on = btn.dataset.mode === auditMode;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     var scoreLabelEl = $('scoreLabel');
     if (scoreLabelEl) {
