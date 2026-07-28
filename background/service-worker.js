@@ -45,14 +45,16 @@ async function injectPageScripts(tabId) {
   }
 }
 
-const CONTENT_SCRIPT_VERSION = 2;
+const CONTENT_SCRIPT_VERSION = 4;
 
 async function ensurePageScripts(tabId, options) {
   const needA11y = !!(options && options.needA11y);
+  const needTokens = !!(options && options.needTokens);
   const ping = await sendMessageOnce(tabId, { type: 'PING' });
   const versionOk = ping && ping.ok && (ping.version || 0) >= CONTENT_SCRIPT_VERSION;
   const a11yOk = !needA11y || (ping && ping.a11y);
-  if (versionOk && a11yOk) return;
+  const tokensOk = !needTokens || (ping && ping.tokens);
+  if (versionOk && a11yOk && tokensOk) return;
   await injectPageScripts(tabId);
 }
 
@@ -60,12 +62,17 @@ async function sendToTab(tabId, payload) {
   if (!tabId) return { ok: false, error: 'No tab' };
 
   const needA11y = payload && payload.type === 'RUN_A11Y_AUDIT';
-
-  let result = await sendMessageOnce(tabId, payload);
-  if (result !== undefined) return result;
+  const needTokens = payload && payload.type === 'RUN_AUDIT';
 
   try {
-    await ensurePageScripts(tabId, { needA11y });
+    if (needA11y || needTokens) {
+      await ensurePageScripts(tabId, { needA11y, needTokens });
+    }
+
+    let result = await sendMessageOnce(tabId, payload);
+    if (result !== undefined) return result;
+
+    await ensurePageScripts(tabId, { needA11y, needTokens });
     result = await sendMessageOnce(tabId, payload);
     if (result !== undefined) return result;
 
@@ -74,6 +81,14 @@ async function sendToTab(tabId, payload) {
       if (!ping || !ping.a11y) {
         return {
           error: 'Accessibility auditor not loaded. Refresh the page and run the audit again.',
+        };
+      }
+    }
+    if (needTokens) {
+      const ping = await sendMessageOnce(tabId, { type: 'PING' });
+      if (!ping || !ping.tokens) {
+        return {
+          error: 'Design token auditor not loaded. Refresh the page and run the audit again.',
         };
       }
     }
@@ -137,7 +152,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'GET_LIBRARIES') {
     ensureBundledLibrary()
       .then((data) => safeSendResponse(sendResponse, data))
@@ -157,36 +172,56 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     return true;
   }
 
-  if (msg.type === 'GET_ACTIVE_TAB') {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      safeSendResponse(sendResponse, { tab: tabs[0] || null });
+  // Resolve the tab that hosts the embedded panel / content script.
+  // Prefer sender.tab — activeTab query is unreliable from extension iframes.
+  if (msg.type === 'WHO_AM_I' || msg.type === 'GET_ACTIVE_TAB') {
+    if (sender && sender.tab && sender.tab.id) {
+      safeSendResponse(sendResponse, {
+        tab: sender.tab,
+        tabId: sender.tab.id,
+        pageUrl: sender.tab.url || null,
+      });
+      return false;
+    }
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+      const tab = tabs[0] || null;
+      safeSendResponse(sendResponse, {
+        tab,
+        tabId: tab && tab.id,
+        pageUrl: tab && tab.url,
+      });
     });
     return true;
   }
 
   if (msg.type === 'RUN_AUDIT_ON_TAB') {
     const runOnTab = async () => {
-      let tabId = msg.tabId;
-      let pageUrl = msg.pageUrl;
+      // Host tab from embedded popup iframe is the most reliable source.
+      let tabId = msg.tabId || (sender && sender.tab && sender.tab.id);
+      let pageUrl = msg.pageUrl || (sender && sender.tab && sender.tab.url);
 
       if (!tabId) {
-        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
         tabId = tabs[0]?.id;
         pageUrl = pageUrl || tabs[0]?.url;
-      } else if (!pageUrl) {
+      }
+
+      if (tabId) {
         try {
           const tab = await chrome.tabs.get(tabId);
-          pageUrl = tab?.url;
+          pageUrl = tab?.url || pageUrl;
         } catch {
           // tab may have closed
         }
       }
 
       if (!tabId) {
-        safeSendResponse(sendResponse, { error: 'No active tab' });
+        safeSendResponse(sendResponse, {
+          error: 'Could not detect the current browser tab. Close and reopen the DS Auditor panel.',
+        });
         return;
       }
-      if (!pageUrl || pageUrl.startsWith('chrome://') || pageUrl.startsWith('chrome-extension://')) {
+      if (!pageUrl || pageUrl.startsWith('chrome://') || pageUrl.startsWith('chrome-extension://') || pageUrl.startsWith('edge://') || pageUrl.startsWith('about:')) {
         safeSendResponse(sendResponse, { error: 'Cannot audit this page. Open a regular website tab.' });
         return;
       }
@@ -203,7 +238,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         if (result && typeof result === 'object' && !result.error) {
           safeSendResponse(sendResponse, { ...result, tabId, auditMode: msg.auditMode || 'tokens' });
         } else {
-          safeSendResponse(sendResponse, result || { error: 'Audit failed — refresh the page and try again' });
+          safeSendResponse(sendResponse, result || { error: 'Audit failed. Refresh the page and try again.' });
         }
       } catch (e) {
         safeSendResponse(sendResponse, { error: e.message || 'Failed to run audit on this tab' });
@@ -216,7 +251,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   // Hover preview — respond immediately; relay async without holding the port open.
   if (msg.type === 'HIGHLIGHT_ELEMENT') {
     safeSendResponse(sendResponse, { ok: true });
-    const tabId = msg.tabId;
+    const tabId = msg.tabId || (sender && sender.tab && sender.tab.id);
     const payload = {
       type: 'HIGHLIGHT',
       elementRef: msg.elementRef,
@@ -226,7 +261,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (tabId) {
       relayToTab(tabId, payload);
     } else {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
         relayToTab(tabs[0]?.id, payload);
       });
     }
@@ -235,12 +270,12 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
   if (msg.type === 'CLEAR_HIGHLIGHT') {
     safeSendResponse(sendResponse, { ok: true });
-    const tabId = msg.tabId;
+    const tabId = msg.tabId || (sender && sender.tab && sender.tab.id);
     const payload = { type: 'CLEAR_HIGHLIGHT' };
     if (tabId) {
       relayToTab(tabId, payload);
     } else {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
         relayToTab(tabs[0]?.id, payload);
       });
     }
@@ -248,7 +283,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
 
   if (msg.type === 'APPLY_FIX') {
-    const tabId = msg.tabId;
+    const tabId = msg.tabId || (sender && sender.tab && sender.tab.id);
     const payload = {
       type: 'APPLY_FIX',
       elementRef: msg.elementRef,
@@ -264,7 +299,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (tabId) {
       sendToTab(tabId, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
     } else {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
         sendToTab(tabs[0]?.id, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
       });
     }
@@ -272,7 +307,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
 
   if (msg.type === 'APPLY_ALL_FIXES') {
-    const tabId = msg.tabId;
+    const tabId = msg.tabId || (sender && sender.tab && sender.tab.id);
     const payload = {
       type: 'APPLY_ALL_FIXES',
       fixes: msg.fixes,
@@ -283,7 +318,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (tabId) {
       sendToTab(tabId, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
     } else {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
         sendToTab(tabs[0]?.id, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
       });
     }
@@ -291,14 +326,14 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
 
   if (msg.type === 'CLEAR_ALL_FIXES') {
-    const tabId = msg.tabId;
+    const tabId = msg.tabId || (sender && sender.tab && sender.tab.id);
     const payload = { type: 'CLEAR_ALL_FIXES' };
     const finish = (result) => safeSendResponse(sendResponse, result || { ok: false, error: 'No response' });
 
     if (tabId) {
       sendToTab(tabId, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
     } else {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
         sendToTab(tabs[0]?.id, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
       });
     }
@@ -306,14 +341,14 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
 
   if (msg.type === 'GET_FIX_STATE') {
-    const tabId = msg.tabId;
+    const tabId = msg.tabId || (sender && sender.tab && sender.tab.id);
     const payload = { type: 'GET_FIX_STATE' };
     const finish = (result) => safeSendResponse(sendResponse, result || { ok: false, active: false, count: 0 });
 
     if (tabId) {
       sendToTab(tabId, payload).then(finish).catch(() => finish({ ok: false, active: false, count: 0 }));
     } else {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
         sendToTab(tabs[0]?.id, payload).then(finish).catch(() => finish({ ok: false, active: false, count: 0 }));
       });
     }

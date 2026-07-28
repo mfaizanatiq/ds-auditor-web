@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var CONTENT_SCRIPT_VERSION = 2;
+  var CONTENT_SCRIPT_VERSION = 4;
   if (window.__dsAuditorContentVersion === CONTENT_SCRIPT_VERSION) return;
   window.__dsAuditorContentVersion = CONTENT_SCRIPT_VERSION;
 
@@ -352,13 +352,14 @@
     };
   }
 
-  chrome.runtime.onMessage.addListener(function (msg, _sender, sendResponse) {
+  function handleMessage(msg, _sender, sendResponse) {
     try {
       if (msg.type === 'PING') {
         sendResponse({
           ok: true,
           version: CONTENT_SCRIPT_VERSION,
           a11y: !!(window.DSAuditorA11y && window.DSAuditorA11y.runA11yAudit),
+          tokens: !!(window.DSAuditor && window.DSAuditor.runAudit),
         });
         return;
       }
@@ -436,5 +437,16 @@
     } catch (e) {
       sendResponse({ ok: false, error: e.message });
     }
-  });
+  }
+
+  // Replaceable handler so reinjection after extension updates does not stack listeners.
+  window.__dsAuditorHandleMessage = handleMessage;
+  if (!window.__dsAuditorListenerAttached) {
+    window.__dsAuditorListenerAttached = true;
+    chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+      if (typeof window.__dsAuditorHandleMessage === 'function') {
+        return window.__dsAuditorHandleMessage(msg, sender, sendResponse);
+      }
+    });
+  }
 })();

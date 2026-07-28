@@ -162,6 +162,7 @@
 
   function notifyIframeContext() {
     if (!frameEl || !frameEl.contentWindow) return;
+    contextPageUrl = location.href;
     frameEl.contentWindow.postMessage({
       source: 'ds-auditor-panel',
       type: 'PANEL_CONTEXT',
@@ -173,7 +174,27 @@
   function setPanelContext(tabId, pageUrl) {
     if (tabId) contextTabId = tabId;
     if (pageUrl) contextPageUrl = pageUrl;
+    else contextPageUrl = location.href;
     notifyIframeContext();
+  }
+
+  function resolveHostTab(done) {
+    if (contextTabId) {
+      if (done) done(contextTabId);
+      return;
+    }
+    chrome.runtime.sendMessage({ type: 'WHO_AM_I' }, function (res) {
+      if (chrome.runtime.lastError) {
+        if (done) done(null);
+        return;
+      }
+      if (res && res.tabId) {
+        setPanelContext(res.tabId, res.pageUrl || location.href);
+        if (done) done(res.tabId);
+        return;
+      }
+      if (done) done(null);
+    });
   }
 
   function onWindowResize() {
@@ -181,10 +202,27 @@
     applyPosition(panelLeft, panelTop);
   }
 
+  function syncPageUrlFromLocation() {
+    if (contextPageUrl === location.href) return;
+    contextPageUrl = location.href;
+    notifyIframeContext();
+  }
+
+  window.addEventListener('message', function (e) {
+    if (!e.data || e.data.source !== 'ds-auditor-popup') return;
+    if (e.data.type === 'REQUEST_PANEL_CONTEXT') {
+      resolveHostTab(function () {
+        notifyIframeContext();
+      });
+    }
+  });
+
   function ensurePanel(callback) {
     if (hostEl && panelEl) {
-      notifyIframeContext();
-      callback();
+      resolveHostTab(function () {
+        notifyIframeContext();
+        callback();
+      });
       return;
     }
 
@@ -243,7 +281,11 @@
     frameEl.className = 'panel-frame';
     frameEl.src = chrome.runtime.getURL('popup/popup.html?embedded=1');
     frameEl.title = 'DS Auditor';
-    frameEl.addEventListener('load', notifyIframeContext);
+    frameEl.addEventListener('load', function () {
+      resolveHostTab(function () {
+        notifyIframeContext();
+      });
+    });
     body.appendChild(frameEl);
 
     panelEl.appendChild(titlebar);
@@ -265,7 +307,9 @@
       }
       applyPosition(panelLeft, panelTop);
       setMinimized(minimized);
-      callback();
+      resolveHostTab(function () {
+        callback();
+      });
     });
   }
 
@@ -301,16 +345,17 @@
 
   chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (sender && sender.tab) {
-      setPanelContext(sender.tab.id, sender.tab.url);
+      setPanelContext(sender.tab.id, sender.tab.url || location.href);
     }
     if (msg.type === 'TOGGLE_PANEL') {
-      if (msg.tabId) setPanelContext(msg.tabId, msg.pageUrl);
+      if (msg.tabId) setPanelContext(msg.tabId, msg.pageUrl || location.href);
+      else syncPageUrlFromLocation();
       togglePanel();
       sendResponse({ ok: true, visible: visible });
       return;
     }
     if (msg.type === 'SHOW_PANEL') {
-      if (msg.tabId) setPanelContext(msg.tabId, msg.pageUrl);
+      if (msg.tabId) setPanelContext(msg.tabId, msg.pageUrl || location.href);
       showPanel();
       sendResponse({ ok: true, visible: visible });
       return;
@@ -321,4 +366,21 @@
       return;
     }
   });
+
+  window.addEventListener('popstate', syncPageUrlFromLocation);
+  window.addEventListener('hashchange', syncPageUrlFromLocation);
+  try {
+    var _pushState = history.pushState;
+    var _replaceState = history.replaceState;
+    history.pushState = function () {
+      var ret = _pushState.apply(this, arguments);
+      setTimeout(syncPageUrlFromLocation, 0);
+      return ret;
+    };
+    history.replaceState = function () {
+      var ret = _replaceState.apply(this, arguments);
+      setTimeout(syncPageUrlFromLocation, 0);
+      return ret;
+    };
+  } catch (e) { /* ignore */ }
 })();

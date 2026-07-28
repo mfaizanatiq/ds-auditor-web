@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "DS Auditor for Web",
-  "version": "0.1.0",
-  "description": "Design system linter for live web pages — audit typography, spacing, colors, shadows, and more against your token libraries.",
+  "version": "0.2.1",
+  "description": "Design system linter for live web pages. Audit typography, spacing, colors, shadows, and more against your token libraries.",
   "permissions": ["activeTab", "storage", "scripting"],
   "host_permissions": ["<all_urls>"],
   "action": {

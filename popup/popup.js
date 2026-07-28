@@ -9,33 +9,64 @@
 
   if (/[?&]embedded=1(?:&|$)/.test(location.search)) {
     document.documentElement.classList.add('embedded');
+    requestEmbeddedContext();
   }
 
   window.addEventListener('message', function (e) {
     if (!e.data || e.data.source !== 'ds-auditor-panel') return;
     if (e.data.type !== 'PANEL_CONTEXT') return;
-    embeddedTabId = e.data.tabId || null;
-    embeddedPageUrl = e.data.pageUrl || null;
+    if (e.data.tabId) embeddedTabId = e.data.tabId;
+    if (e.data.pageUrl) embeddedPageUrl = e.data.pageUrl;
     if (!lastReport && embeddedPageUrl) restorePersistedAudit();
   });
 
+  function requestEmbeddedContext() {
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          source: 'ds-auditor-popup',
+          type: 'REQUEST_PANEL_CONTEXT',
+        }, '*');
+      }
+    } catch (err) { /* ignore */ }
+  }
+
   function getActiveTabContext(done) {
-    if (embeddedTabId && embeddedPageUrl) {
-      done({ id: embeddedTabId, url: embeddedPageUrl });
+    // 1) Context from panel shell (most reliable once received)
+    if (embeddedTabId) {
+      done({ id: embeddedTabId, url: embeddedPageUrl || '' });
       return;
     }
-    chrome.runtime.sendMessage({ type: 'GET_ACTIVE_TAB' }, function (res) {
+
+    // 2) Ask background — uses sender.tab for embedded iframe
+    chrome.runtime.sendMessage({ type: 'WHO_AM_I' }, function (res) {
       if (chrome.runtime.lastError) {
-        done(null);
+        requestEmbeddedContext();
+        setTimeout(function () {
+          if (embeddedTabId) {
+            done({ id: embeddedTabId, url: embeddedPageUrl || '' });
+          } else {
+            // Allow audit to proceed — service worker will resolve via sender.tab
+            done({ id: null, url: embeddedPageUrl || '' });
+          }
+        }, 150);
         return;
       }
-      if (res && res.tab) {
-        embeddedTabId = res.tab.id;
-        embeddedPageUrl = res.tab.url;
-        done(res.tab);
+      var tab = res && (res.tab || (res.tabId ? { id: res.tabId, url: res.pageUrl } : null));
+      if (tab && tab.id) {
+        embeddedTabId = tab.id;
+        embeddedPageUrl = tab.url || embeddedPageUrl || null;
+        done({ id: tab.id, url: embeddedPageUrl || tab.url || '' });
         return;
       }
-      done(null);
+      requestEmbeddedContext();
+      setTimeout(function () {
+        if (embeddedTabId) {
+          done({ id: embeddedTabId, url: embeddedPageUrl || '' });
+        } else {
+          done({ id: null, url: embeddedPageUrl || '' });
+        }
+      }, 150);
     });
   }
 
@@ -182,15 +213,19 @@
       showStatus('Export module not loaded', 'error');
       return;
     }
-    var issues = (lastReport.issues || []).filter(function (issue) {
-      return !isIssueIgnored(issue);
-    });
-    var xml = Exp.buildExcelXml({ report: lastReport, issues: issues });
-    var slug = getPageIgnoreKey((lastReport.page && lastReport.page.url) || 'report')
-      .replace(/[^\w.-]+/g, '-')
-      .slice(0, 60);
-    downloadBlob(xml, 'accessibility-audit-' + slug + '.xls', 'application/vnd.ms-excel');
-    showStatus('Excel report downloaded · ' + issues.length + ' issues with WCAG criteria', 'success');
+    try {
+      var issues = (lastReport.issues || []).filter(function (issue) {
+        return !isIssueIgnored(issue);
+      });
+      var xml = Exp.buildExcelXml({ report: lastReport, issues: issues });
+      var slug = getPageIgnoreKey((lastReport.page && lastReport.page.url) || 'report')
+        .replace(/[^\w.-]+/g, '-')
+        .slice(0, 60);
+      downloadBlob(xml, 'accessibility-audit-' + slug + '.xls', 'application/vnd.ms-excel');
+      showStatus('Excel report downloaded · ' + issues.length + ' issues with WCAG criteria', 'success');
+    } catch (err) {
+      showStatus(err && err.message ? err.message : 'Could not export Excel report', 'error');
+    }
   }
 
   function exportHtmlReport() {
@@ -206,7 +241,7 @@
       .replace(/[^\w.-]+/g, '-')
       .slice(0, 60);
     downloadBlob(html, 'ds-audit-' + slug + '.html', 'text/html;charset=utf-8');
-    showStatus('HTML report downloaded — share with your dev team', 'success');
+    showStatus('HTML report downloaded. Share with your dev team.', 'success');
   }
 
   function exportJsonReport() {
@@ -591,9 +626,28 @@
     statusMsg.className = 'status-msg' + (type ? ' ' + type : '');
   }
 
-  function setLoading(on) {
+  var auditRequestTimer = null;
+
+  function setLoading(on, label) {
     loader.classList.toggle('visible', on);
     runAuditBtn.disabled = on || (auditMode === 'tokens' && !getActiveTokens().length);
+    if (label) {
+      var textEl = loader.querySelector('.loader-text');
+      if (textEl) textEl.textContent = label;
+    }
+    if (auditRequestTimer) {
+      clearTimeout(auditRequestTimer);
+      auditRequestTimer = null;
+    }
+    if (on) {
+      auditRequestTimer = setTimeout(function () {
+        auditRequestTimer = null;
+        if (loader.classList.contains('visible')) {
+          setLoading(false);
+          showStatus('Audit timed out. Refresh the page and try again.', 'error');
+        }
+      }, 45000);
+    }
   }
 
   function getActiveTokens() {
@@ -630,15 +684,15 @@
 
   function formatLibraryReadyMeta(tokenCount) {
     var tokens = getActiveTokens();
-    var Synth = global.DSAuditorTokenSynthesizer;
+    var Synth = window.DSAuditorTokenSynthesizer;
     if (Synth && tokens.length) {
       var idx = Synth.getTokenIndex(tokens);
       if (idx && idx.stats) {
         return tokenCount + ' tokens · ' + idx.stats.semantic + ' semantic · ' +
-          idx.stats.composites + ' type styles — ready to audit';
+          idx.stats.composites + ' type styles. Ready to audit.';
       }
     }
-    return tokenCount + ' tokens loaded — ready to audit';
+    return tokenCount + ' tokens loaded. Ready to audit.';
   }
 
   function updateAuditButton() {
@@ -851,9 +905,21 @@
     });
   }
 
+  function isValidFilterForMode(mode, filter) {
+    if (!filter || filter === 'all') return true;
+    if (mode === 'a11y') {
+      return ['contrast', 'images', 'structure', 'forms', 'keyboard', 'focus', 'aria'].indexOf(filter) !== -1;
+    }
+    return ['color', 'typography', 'spacing', 'size', 'effect'].indexOf(filter) !== -1;
+  }
+
   function restorePersistedAudit(done) {
-    if (restoringAudit || lastReport) {
+    if (restoringAudit) {
       if (done) done(false);
+      return;
+    }
+    if (lastReport && lastReport.auditMode === auditMode) {
+      if (done) done(true);
       return;
     }
     getActiveTabContext(function (tab) {
@@ -874,7 +940,9 @@
         }
         restoringAudit = true;
         auditedTabId = tab.id || cached.auditedTabId || null;
-        activeFilter = cached.activeFilter || 'all';
+        activeFilter = isValidFilterForMode(auditMode, cached.activeFilter)
+          ? (cached.activeFilter || 'all')
+          : 'all';
         auditViewMode = cached.auditViewMode || 'foundation';
         loadIgnoredRules(pageKey, function () {
           loadAppliedFixLog(pageKey, function () {
@@ -913,18 +981,25 @@
     if (issueHint) issueHint.style.display = 'none';
     emptyState.style.display = 'block';
     if (auditMode === 'a11y') {
-      emptyState.innerHTML = '<p><strong>Accessibility mode</strong> — audits WCAG 2.x Level A &amp; AA criteria: contrast, images, structure, forms, keyboard, focus, and ARIA.</p>';
-      scoreValue.textContent = '—';
+      emptyState.innerHTML = '<p><strong>Accessibility mode</strong>. Audits WCAG 2.x Level A &amp; AA criteria: contrast, images, structure, forms, keyboard, focus, and ARIA.</p>';
+      scoreValue.textContent = '-';
+      scoreValue.className = 'score-value';
       scoreMeta.textContent = 'Run accessibility audit to scan this page';
     } else {
       emptyState.innerHTML = '<p>Upload any design-system token file (CSS custom properties or JSON). The auditor scans your library, infers semantic layers, and suggests the right tokens automatically.</p>';
+      if (!lastReport || lastReport.auditMode !== 'tokens') {
+        scoreValue.textContent = '-';
+        scoreValue.className = 'score-value';
+      }
       updateAuditButton();
     }
   }
 
   function setAuditMode(mode) {
     if (!mode || mode === auditMode) return;
+    if (lastReport) persistAuditReport(lastReport);
     auditMode = mode;
+    activeFilter = 'all';
     document.querySelectorAll('.audit-mode-btn').forEach(function (btn) {
       btn.classList.toggle('active', btn.dataset.mode === mode);
     });
@@ -1387,7 +1462,7 @@
           '<code>' + escapeHtml(entry.cssSnippet || '') + '</code>' +
         '</div>' +
         '<div class="applied-fix-selector"><span class="applied-fix-label">Selector</span> <code>' +
-          escapeHtml(entry.selector || '—') + '</code></div>' +
+          escapeHtml(entry.selector || '-') + '</code></div>' +
       '</div>';
     return card;
   }
@@ -1580,6 +1655,12 @@
     }
 
     filterSegments.innerHTML = '';
+    if (activeFilter !== 'all') {
+      var filterStillValid = types.some(function (t) {
+        return t.id === activeFilter && (t.id === 'all' || t.count > 0);
+      });
+      if (!filterStillValid) activeFilter = 'all';
+    }
     types.forEach(function (t) {
       if (t.id !== 'all' && !t.count) return;
       var btn = document.createElement('button');
@@ -1669,7 +1750,7 @@
         emptyState.innerHTML =
           '<p><strong>All open issues addressed.</strong> ' + appliedCount +
           ' fix' + (appliedCount !== 1 ? 'es' : '') +
-          ' applied — see list below or export HTML report for your dev team.</p>';
+          ' applied. See list below or export HTML report for your dev team.</p>';
       } else if (report.issueCount) {
         emptyState.innerHTML = activeFilter !== 'all'
           ? '<p>No open issues in this category.</p>'
@@ -1711,6 +1792,7 @@
   function renderReport(report) {
     lastReport = report;
     if (report && report.auditMode) auditMode = report.auditMode;
+    if (!isValidFilterForMode(auditMode, activeFilter)) activeFilter = 'all';
     document.querySelectorAll('.audit-mode-btn').forEach(function (btn) {
       btn.classList.toggle('active', btn.dataset.mode === auditMode);
     });
@@ -1743,7 +1825,7 @@
         return;
       }
       if (!report || typeof report !== 'object') {
-        showStatus('Audit failed — refresh the page and try again', 'error');
+        showStatus('Audit failed. Refresh the page and try again.', 'error');
         return;
       }
       if (report.error) {
@@ -1758,16 +1840,13 @@
   function runAudit() {
     if (auditMode === 'a11y') {
       getActiveTabContext(function (tab) {
-        if (!tab || !tab.id) {
-          showStatus('Could not find the page tab — refresh and open the panel again', 'error');
-          return;
-        }
-        auditedTabId = tab.id;
-        setLoading(true);
+        auditedTabId = tab && tab.id;
+        activeFilter = 'all';
+        setLoading(true, 'Scanning accessibility…');
         showStatus('Scanning page for accessibility issues…');
         sendAuditRequest({ auditMode: 'a11y', tokens: [] }, tab, function (report) {
           report.auditMode = 'a11y';
-          var pageUrl = (report.page && report.page.url) || (tab && tab.url) || '';
+          var pageUrl = (report.page && report.page.url) || (tab && tab.url) || embeddedPageUrl || '';
           var pageKey = getPageIgnoreKey(pageUrl);
           loadIgnoredRules(pageKey, function () {
             appliedFixLog = [];
@@ -1791,11 +1870,12 @@
 
     getActiveTabContext(function (tab) {
       auditedTabId = tab && tab.id;
-      setLoading(true);
-      showStatus('');
+      activeFilter = 'all';
+      setLoading(true, 'Auditing design tokens…');
+      showStatus('Scanning page against your token libraries…');
       sendAuditRequest({ auditMode: 'tokens', tokens: tokens }, tab, function (report) {
         report.auditMode = 'tokens';
-        var pageUrl = (report.page && report.page.url) || (tab && tab.url) || '';
+        var pageUrl = (report.page && report.page.url) || (tab && tab.url) || embeddedPageUrl || '';
         var pageKey = getPageIgnoreKey(pageUrl);
         loadIgnoredRules(pageKey, function () {
           loadAppliedFixLog(pageKey, function () {
