@@ -118,6 +118,11 @@
   color: #ffffff;
 }
 
+.panel-close-btn:hover {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+}
+
 .panel-body {
   flex: 1;
   min-height: 0;

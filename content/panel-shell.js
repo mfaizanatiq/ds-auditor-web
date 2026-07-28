@@ -18,6 +18,7 @@
   var panelEl = null;
   var frameEl = null;
   var minimizeBtn = null;
+  var closeBtn = null;
   var contextTabId = null;
   var contextPageUrl = null;
   var visible = false;
@@ -268,7 +269,23 @@
       setMinimized(!minimized);
     });
 
+    closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'panel-icon-btn panel-close-btn';
+    closeBtn.title = 'Close panel';
+    closeBtn.setAttribute('aria-label', 'Close panel');
+    closeBtn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+        '<line x1="18" y1="6" x2="6" y2="18"/>' +
+        '<line x1="6" y1="6" x2="18" y2="18"/>' +
+      '</svg>';
+    closeBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      hidePanel();
+    });
+
     actions.appendChild(minimizeBtn);
+    actions.appendChild(closeBtn);
     titlebar.appendChild(grip);
     titlebar.appendChild(title);
     titlebar.appendChild(actions);
@@ -334,6 +351,10 @@
   function hidePanel() {
     if (!panelEl) return;
     setVisible(false);
+    if (minimized) setMinimized(false);
+    try {
+      chrome.runtime.sendMessage({ type: 'CLEAR_HIGHLIGHT', tabId: contextTabId });
+    } catch (e) { /* ignore */ }
   }
 
   window.DSAuditorPanel = {
