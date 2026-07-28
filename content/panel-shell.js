@@ -10,7 +10,7 @@
   var HOST_ID = 'ds-auditor-panel-host';
   var STORAGE_KEY = 'dsAuditorPanelState';
   var PANEL_WIDTH = 420;
-  var PANEL_HEIGHT = 560;
+  var PANEL_HEIGHT = 640;
   var PANEL_MARGIN = 12;
   var MIN_VISIBLE = 48;
 

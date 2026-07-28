@@ -961,6 +961,7 @@
       showModeEmptyState();
       return;
     }
+    setReportLayout(true);
     exportBtn.style.display = 'flex';
     emptyState.style.display = 'none';
     refreshComplianceUI();
@@ -974,7 +975,12 @@
     }
   }
 
+  function setReportLayout(hasReport) {
+    document.body.classList.toggle('has-report', !!hasReport);
+  }
+
   function showModeEmptyState() {
+    setReportLayout(false);
     issueList.innerHTML = '';
     filterBar.style.display = 'none';
     exportBtn.style.display = 'none';
@@ -1793,6 +1799,7 @@
     lastReport = report;
     if (report && report.auditMode) auditMode = report.auditMode;
     if (!isValidFilterForMode(auditMode, activeFilter)) activeFilter = 'all';
+    setReportLayout(!!report);
     document.querySelectorAll('.audit-mode-btn').forEach(function (btn) {
       btn.classList.toggle('active', btn.dataset.mode === auditMode);
     });
