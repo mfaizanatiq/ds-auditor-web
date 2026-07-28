@@ -229,19 +229,28 @@
   }
 
   function exportHtmlReport() {
-    if (!lastReport || !window.DSAuditorHtmlReport) return;
-    var html = window.DSAuditorHtmlReport.build({
-      report: lastReport,
-      openIssues: remainingIssues(),
-      appliedFixes: appliedFixLog.slice(),
-      ignoredIssues: getIgnoredIssuesForExport(),
-      libraries: getActiveLibraryNames(),
-    });
-    var slug = getPageIgnoreKey((lastReport.page && lastReport.page.url) || 'report')
-      .replace(/[^\w.-]+/g, '-')
-      .slice(0, 60);
-    downloadBlob(html, 'ds-audit-' + slug + '.html', 'text/html;charset=utf-8');
-    showStatus('HTML report downloaded. Share with your dev team.', 'success');
+    if (!lastReport) return;
+    if (!window.DSAuditorHtmlReport) {
+      showStatus('HTML export module not loaded', 'error');
+      return;
+    }
+    try {
+      var html = window.DSAuditorHtmlReport.build({
+        report: lastReport,
+        openIssues: remainingIssues(),
+        appliedFixes: lastReport.auditMode === 'a11y' ? [] : appliedFixLog.slice(),
+        ignoredIssues: getIgnoredIssuesForExport(),
+        libraries: getActiveLibraryNames(),
+      });
+      var slug = getPageIgnoreKey((lastReport.page && lastReport.page.url) || 'report')
+        .replace(/[^\w.-]+/g, '-')
+        .slice(0, 60);
+      var prefix = lastReport.auditMode === 'a11y' ? 'accessibility-audit-' : 'ds-audit-';
+      downloadBlob(html, prefix + slug + '.html', 'text/html;charset=utf-8');
+      showStatus('HTML report downloaded. Share with your team.', 'success');
+    } catch (err) {
+      showStatus(err && err.message ? err.message : 'Could not export HTML report', 'error');
+    }
   }
 
   function exportJsonReport() {
@@ -1860,7 +1869,7 @@
             rebuildAppliedKeysFromLog();
             renderReport(report);
             showStatus(
-              'Accessibility audit · ' + (report.issueCount || 0) + ' issues · Export Excel for WCAG report',
+              'Accessibility audit · ' + (report.issueCount || 0) + ' issues · Export HTML report',
               'success'
             );
           });
@@ -1906,13 +1915,21 @@
 
   function exportReport(e) {
     if (!lastReport) return;
-    if (lastReport.auditMode === 'a11y') {
-      if (e && e.shiftKey) exportJsonReport();
-      else exportA11yExcel();
+    // Default: HTML for both modes.
+    // Shift+click: Excel (a11y) or JSON (tokens). Alt+click: JSON.
+    if (e && e.altKey) {
+      exportJsonReport();
       return;
     }
-    if (e && e.shiftKey) exportJsonReport();
-    else exportHtmlReport();
+    if (lastReport.auditMode === 'a11y' && e && e.shiftKey) {
+      exportA11yExcel();
+      return;
+    }
+    if (lastReport.auditMode !== 'a11y' && e && e.shiftKey) {
+      exportJsonReport();
+      return;
+    }
+    exportHtmlReport();
   }
 
   // Wire events
@@ -1961,11 +1978,12 @@
     if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
   });
 
-  // Keyboard: Cmd/Ctrl+E HTML report, Shift+Cmd/Ctrl+E JSON
+  // Keyboard: Cmd/Ctrl+E HTML report, Shift+Cmd/Ctrl+E Excel (a11y) / JSON (tokens)
   document.addEventListener('keydown', function (e) {
     if (e.key === 'e' && (e.metaKey || e.ctrlKey) && lastReport) {
-      if (e.shiftKey) exportJsonReport();
-      else if (lastReport.auditMode === 'a11y') exportA11yExcel();
+      e.preventDefault();
+      if (e.shiftKey && lastReport.auditMode === 'a11y') exportA11yExcel();
+      else if (e.shiftKey) exportJsonReport();
       else exportHtmlReport();
     }
   });
