@@ -651,6 +651,10 @@
   var fileInput = $('fileInput');
   var uploadZone = $('uploadZone');
   var issueHint = $('issueHint');
+  var sessionToast = $('sessionToast');
+  var sessionToastTitle = $('sessionToastTitle');
+  var sessionToastMeta = $('sessionToastMeta');
+  var sessionToastTimer = null;
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(function (s) {
@@ -661,6 +665,82 @@
   function showStatus(msg, type) {
     statusMsg.textContent = msg || '';
     statusMsg.className = 'status-msg' + (type ? ' ' + type : '');
+  }
+
+  function hideSessionToast() {
+    if (sessionToastTimer) {
+      clearTimeout(sessionToastTimer);
+      sessionToastTimer = null;
+    }
+    if (sessionToast) sessionToast.hidden = true;
+  }
+
+  function showSessionToast(report) {
+    if (!sessionToast) return;
+    var count = report && report.issueCount != null ? report.issueCount : 0;
+    var modeLabel = report && report.auditMode === 'a11y' ? 'Accessibility' : 'Design tokens';
+    if (sessionToastTitle) sessionToastTitle.textContent = modeLabel + ' audit complete';
+    if (sessionToastMeta) {
+      sessionToastMeta.textContent = count + ' issue' + (count === 1 ? '' : 's') +
+        ' found. Re-run this page or start a new session.';
+    }
+    sessionToast.hidden = false;
+    if (sessionToastTimer) clearTimeout(sessionToastTimer);
+    sessionToastTimer = setTimeout(function () {
+      sessionToastTimer = null;
+      // Keep toast available; don't auto-hide so Re-run / New session stay reachable.
+    }, 0);
+  }
+
+  function clearCachedReportForCurrentMode(done) {
+    getActiveTabContext(function (tab) {
+      var url = (lastReport && lastReport.page && lastReport.page.url) ||
+        (tab && tab.url) || embeddedPageUrl || '';
+      if (!url) {
+        if (done) done();
+        return;
+      }
+      var pageKey = getPageIgnoreKey(url);
+      chrome.storage.local.get([AUDIT_CACHE_KEY], function (data) {
+        var all = (data && data[AUDIT_CACHE_KEY]) || {};
+        if (all[pageKey] && all[pageKey].modes) {
+          delete all[pageKey].modes[auditMode];
+          if (!Object.keys(all[pageKey].modes).length) delete all[pageKey];
+        }
+        var payload = {};
+        payload[AUDIT_CACHE_KEY] = all;
+        chrome.storage.local.set(payload, function () {
+          if (done) done();
+        });
+      });
+    });
+  }
+
+  function startNewSession() {
+    hideSessionToast();
+    clearPageHighlight();
+    if (auditMode === 'tokens' && resolveAuditTabId()) {
+      sendTabMessage({ type: 'CLEAR_ALL_FIXES', tabId: resolveAuditTabId() }, function () {});
+    }
+    appliedFixKeys = Object.create(null);
+    appliedFixLog = [];
+    bulkPreviewActive = false;
+    applyAllEnabled = false;
+    activeFilter = 'all';
+    lastReport = null;
+    setReportLayout(false);
+    exportBtn.style.display = 'none';
+    filterBar.style.display = 'none';
+    if (issueHint) issueHint.style.display = 'none';
+    issueList.innerHTML = '';
+    emptyState.style.display = 'block';
+    setApplyAllToggle(false, true);
+    var wrap = $('applyAllWrap');
+    if (wrap) wrap.style.display = 'none';
+    clearCachedReportForCurrentMode(function () {
+      showModeEmptyState();
+      showStatus('New session ready. Run an audit when you are ready.', 'success');
+    });
   }
 
   var auditRequestTimer = null;
@@ -1017,6 +1097,7 @@
   }
 
   function showModeEmptyState() {
+    hideSessionToast();
     setReportLayout(false);
     issueList.innerHTML = '';
     filterBar.style.display = 'none';
@@ -1707,9 +1788,10 @@
     types.forEach(function (t) {
       if (t.id !== 'all' && !t.count) return;
       var btn = document.createElement('button');
-      btn.className = 'filter-segment' + (activeFilter === t.id ? ' active' : '');
+      btn.type = 'button';
+      btn.className = 'filter-chip' + (activeFilter === t.id ? ' active' : '');
       btn.dataset.filter = t.id;
-      btn.innerHTML = t.label + ' <span class="chip-count">' + t.count + '</span>';
+      btn.innerHTML = '<span class="chip-label">' + t.label + '</span><span class="chip-count">' + t.count + '</span>';
       btn.addEventListener('click', function () {
         activeFilter = t.id;
         if (lastReport) persistAuditReport(lastReport);
@@ -1896,6 +1978,7 @@
             appliedFixLog = [];
             rebuildAppliedKeysFromLog();
             renderReport(report);
+            showSessionToast(report);
             showStatus(
               'Accessibility audit · ' + (report.issueCount || 0) + ' issues · Export HTML report',
               'success'
@@ -1925,6 +2008,7 @@
           loadAppliedFixLog(pageKey, function () {
             rebuildAppliedKeysFromLog();
             renderReport(report);
+            showSessionToast(report);
             var kept = appliedFixLog.length;
             if (kept > 0) {
               showStatus(
@@ -1968,6 +2052,21 @@
   });
   runAuditBtn.addEventListener('click', runAudit);
   exportBtn.addEventListener('click', exportReport);
+  var sessionRerunBtn = $('sessionRerunBtn');
+  var sessionNewBtn = $('sessionNewBtn');
+  var sessionToastDismiss = $('sessionToastDismiss');
+  if (sessionRerunBtn) {
+    sessionRerunBtn.addEventListener('click', function () {
+      hideSessionToast();
+      runAudit();
+    });
+  }
+  if (sessionNewBtn) {
+    sessionNewBtn.addEventListener('click', startNewSession);
+  }
+  if (sessionToastDismiss) {
+    sessionToastDismiss.addEventListener('click', hideSessionToast);
+  }
   var auditModeBar = $('auditModeBar');
   if (auditModeBar) {
     auditModeBar.querySelectorAll('.audit-mode-btn').forEach(function (btn) {

@@ -48,7 +48,7 @@
         <button type="button" class="view-btn active" data-view="foundation">Grouped</button>
         <button type="button" class="view-btn" data-view="component">By element</button>
       </div>
-      <div class="filter-segment-group" id="filterSegments"></div>
+      <div class="filter-chip-row" id="filterSegments"></div>
     </div>
     <p class="issue-hint" id="issueHint" style="display:none">Hover a card to locate on page · Click Apply to inject the token fix</p>
 
@@ -81,6 +81,22 @@
   </div>
 
   <div class="status-msg" id="statusMsg"></div>
+
+  <div class="session-toast" id="sessionToast" hidden>
+    <div class="session-toast-copy">
+      <strong id="sessionToastTitle">Audit complete</strong>
+      <span id="sessionToastMeta">Review issues below, or start again.</span>
+    </div>
+    <div class="session-toast-actions">
+      <button type="button" class="session-toast-btn" id="sessionRerunBtn">Re-run</button>
+      <button type="button" class="session-toast-btn session-toast-btn-primary" id="sessionNewBtn">New session</button>
+      <button type="button" class="session-toast-dismiss" id="sessionToastDismiss" aria-label="Dismiss">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
 
   <script src="../lib/color-utils.js"></script>
   <script src="../lib/token-parser.js"></script>
