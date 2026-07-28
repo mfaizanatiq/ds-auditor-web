@@ -313,13 +313,15 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       fixes: msg.fixes,
       tokens: msg.tokens,
     };
-    const finish = (result) => safeSendResponse(sendResponse, result || { ok: false, error: 'No response' });
+    const finish = (result, usedTabId) =>
+      safeSendResponse(sendResponse, Object.assign({ ok: false, error: 'No response' }, result || {}, { tabId: usedTabId || tabId }));
 
     if (tabId) {
-      sendToTab(tabId, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
+      sendToTab(tabId, payload).then((r) => finish(r, tabId)).catch((e) => finish({ ok: false, error: e.message }, tabId));
     } else {
       chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-        sendToTab(tabs[0]?.id, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
+        const id = tabs[0]?.id;
+        sendToTab(id, payload).then((r) => finish(r, id)).catch((e) => finish({ ok: false, error: e.message }, id));
       });
     }
     return true;
@@ -328,13 +330,15 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'CLEAR_ALL_FIXES') {
     const tabId = msg.tabId || (sender && sender.tab && sender.tab.id);
     const payload = { type: 'CLEAR_ALL_FIXES' };
-    const finish = (result) => safeSendResponse(sendResponse, result || { ok: false, error: 'No response' });
+    const finish = (result, usedTabId) =>
+      safeSendResponse(sendResponse, Object.assign({ ok: false, error: 'No response' }, result || {}, { tabId: usedTabId || tabId }));
 
     if (tabId) {
-      sendToTab(tabId, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
+      sendToTab(tabId, payload).then((r) => finish(r, tabId)).catch((e) => finish({ ok: false, error: e.message }, tabId));
     } else {
       chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-        sendToTab(tabs[0]?.id, payload).then(finish).catch((e) => finish({ ok: false, error: e.message }));
+        const id = tabs[0]?.id;
+        sendToTab(id, payload).then((r) => finish(r, id)).catch((e) => finish({ ok: false, error: e.message }, id));
       });
     }
     return true;

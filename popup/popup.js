@@ -362,13 +362,14 @@
   }
 
   function syncFromPageFixState(done) {
-    if (!auditedTabId) {
+    var tabId = resolveAuditTabId();
+    if (!tabId) {
       syncApplyAllToggle();
       if (done) done();
       return;
     }
-    chrome.runtime.sendMessage(
-      { type: 'GET_FIX_STATE', tabId: auditedTabId },
+    sendTabMessage(
+      { type: 'GET_FIX_STATE', tabId: tabId },
       function (state) {
         if (state && state.active) {
           bulkPreviewActive = true;
@@ -394,6 +395,23 @@
       }
     );
   }
+  function resolveAuditTabId() {
+    return auditedTabId || embeddedTabId || null;
+  }
+
+  function sendTabMessage(payload, done) {
+    var msg = Object.assign({}, payload);
+    if (!msg.tabId) msg.tabId = resolveAuditTabId();
+    chrome.runtime.sendMessage(msg, function (result) {
+      if (chrome.runtime.lastError) {
+        done(null, chrome.runtime.lastError.message);
+        return;
+      }
+      if (result && result.tabId) auditedTabId = result.tabId;
+      done(result || null, null);
+    });
+  }
+
   function setApplyAllToggle(on, silent) {
     applyAllEnabled = on;
     var toggle = $('applyAllToggle');
@@ -410,8 +428,9 @@
     var wrap = $('applyAllWrap');
     if (wrap) {
       wrap.title = on
-        ? 'All suggested fixes are applied on the page'
-        : 'Preview all fixes on page';
+        ? 'Fixes applied on page. Turn off to remove them.'
+        : 'Turn on to preview all suggested token fixes on the page';
+      wrap.setAttribute('aria-label', wrap.title);
     }
   }
 
@@ -433,9 +452,11 @@
 
   function applyAllFixesBulk() {
     var fixes = buildBulkFixes();
-    if (!fixes.length || !auditedTabId) {
+    var tabId = resolveAuditTabId();
+    if (!fixes.length) {
       bulkPreviewActive = false;
       setApplyAllToggle(false, true);
+      showStatus('No token fixes available to apply', 'error');
       return;
     }
 
@@ -443,21 +464,23 @@
     if (toggle) toggle.disabled = true;
     showStatus('Applying ' + fixes.length + ' fixes…');
 
-    chrome.runtime.sendMessage({
+    sendTabMessage({
       type: 'APPLY_ALL_FIXES',
-      tabId: auditedTabId,
+      tabId: tabId,
       fixes: fixes,
       tokens: tokenPayload(),
-    }).then(function (result) {
+    }, function (result, err) {
       if (toggle) toggle.disabled = false;
-      if (!result || !result.ok) {
+      if (err || !result || !result.ok) {
         bulkPreviewActive = false;
         setApplyAllToggle(false, true);
-        showStatus((result && result.error) || 'Could not apply all fixes', 'error');
+        showStatus(err || (result && result.error) || 'Could not apply all fixes', 'error');
         return;
       }
+      if (result.tabId) auditedTabId = result.tabId;
       markBulkFixKeysFromReport();
       bulkPreviewActive = true;
+      applyAllEnabled = true;
       if (lastReport) {
         var typoSeen = Object.create(null);
         lastReport.issues.forEach(function (issue) {
@@ -472,56 +495,58 @@
         renderFilters(lastReport);
         renderIssues(lastReport);
       }
-      syncApplyAllToggle();
+      setApplyAllToggle(true, true);
       showStatus(
-        'Applied ' + result.applied + ' fixes' +
-        (result.skipped ? ' (' + result.skipped + ' already applied)' : ''),
+        'Applied ' + (result.applied || 0) + ' fixes on the page' +
+        (result.skipped ? ' (' + result.skipped + ' already applied)' : '') +
+        '. Turn off to remove them.',
         'success'
       );
-    }).catch(function (err) {
-      if (toggle) toggle.disabled = false;
-      bulkPreviewActive = false;
-      setApplyAllToggle(false, true);
-      showStatus(err && err.message ? err.message : 'Could not apply all fixes', 'error');
     });
   }
 
   function clearAllFixesBulk() {
-    if (!auditedTabId) {
-      appliedFixKeys = Object.create(null);
-      bulkPreviewActive = false;
-      clearAppliedFixLog();
-      syncApplyAllToggle();
-      return;
-    }
-
+    var tabId = resolveAuditTabId();
     var toggle = $('applyAllToggle');
     if (toggle) toggle.disabled = true;
     showStatus('Removing all fixes…');
 
-    chrome.runtime.sendMessage({
-      type: 'CLEAR_ALL_FIXES',
-      tabId: auditedTabId,
-    }).then(function (result) {
-      if (toggle) toggle.disabled = false;
-      if (!result || !result.ok) {
-        setApplyAllToggle(true, true);
-        showStatus((result && result.error) || 'Could not remove fixes', 'error');
-        return;
-      }
+    function finishLocalClear() {
       appliedFixKeys = Object.create(null);
       bulkPreviewActive = false;
+      applyAllEnabled = false;
       clearAppliedFixLog();
-      syncApplyAllToggle();
+      setApplyAllToggle(false, true);
       if (lastReport) {
         renderFilters(lastReport);
         renderIssues(lastReport);
       }
       showStatus('All fixes removed from page', 'success');
-    }).catch(function (err) {
+    }
+
+    if (!tabId) {
       if (toggle) toggle.disabled = false;
-      setApplyAllToggle(true, true);
-      showStatus(err && err.message ? err.message : 'Could not remove fixes', 'error');
+      finishLocalClear();
+      return;
+    }
+
+    sendTabMessage({
+      type: 'CLEAR_ALL_FIXES',
+      tabId: tabId,
+    }, function (result, err) {
+      if (toggle) toggle.disabled = false;
+      if (err || !result || !result.ok) {
+        // Still clear local UI state so toggle can turn off; page may need refresh.
+        finishLocalClear();
+        showStatus(
+          'Preview cleared in the panel' +
+          (err || (result && result.error) ? ' (' + (err || result.error) + ')' : '') +
+          '. Refresh the page if styles remain.',
+          'success'
+        );
+        return;
+      }
+      finishLocalClear();
     });
   }
 
@@ -529,8 +554,11 @@
     if (suppressApplyAllToggle) return;
     var toggle = $('applyAllToggle');
     if (!toggle) return;
-    if (toggle.checked) applyAllFixesBulk();
-    else clearAllFixesBulk();
+    if (toggle.checked) {
+      applyAllFixesBulk();
+    } else {
+      clearAllFixesBulk();
+    }
   }
 
   function highlightIssue(issue, scroll) {
